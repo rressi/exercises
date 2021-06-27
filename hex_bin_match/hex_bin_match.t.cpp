@@ -63,7 +63,9 @@ INSTANTIATE_TEST_SUITE_P(UnitHexBinMatch,
                                  TestCase{"2", "10", true},
                                  TestCase{"3", "11", true},
                                  TestCase{"4", "100", true},
-                                 TestCase{"7", "111", true}
+                                 TestCase{"7", "111", true},
+
+                                 TestCase{"0123", "0" "0001" "0010" "0011", true}
 
                          ),
                          &UnitHexBinMatch::getTestName);
