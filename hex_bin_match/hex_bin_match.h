@@ -18,5 +18,5 @@ auto decodeBinDigit(char digit) -> unsigned;
 
 auto decodeHexDigit(char digit) -> unsigned;
 
-} //
+} // namespace hex_bin_match
 
