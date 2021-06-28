@@ -1,12 +1,15 @@
 #pragma once
 
+#include <limits>
 #include <string_view>
 
 namespace edit_distance {
 
 using StringView = std::string_view;
-using MaxDistance = long;
+using Distance = unsigned;
 
-bool matchStrings(StringView a, StringView b, MaxDistance maxDistance = -1);
+bool matchStrings(StringView s, StringView t, Distance maxDistance);
+
+auto calculateEditDistance(StringView s, StringView t) -> Distance;
 
 } // namespace edit_distance
