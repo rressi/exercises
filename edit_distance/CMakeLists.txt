@@ -1,9 +1,9 @@
 
-add_executable(edit_distance
+add_executable(test_edit_distance
 
         edit_distance.cpp
         edit_distance.t.cpp
 
         )
 
-target_link_libraries(edit_distance gtest_main)
+target_link_libraries(test_edit_distance gtest_main)
