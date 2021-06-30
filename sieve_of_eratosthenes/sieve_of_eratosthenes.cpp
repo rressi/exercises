@@ -25,7 +25,7 @@ auto findPrimeNumbersSequentially(Number maxNumber) -> std::vector<Number> {
     for (auto x = 2; x < maxNumber; x++) {
         if (!sieve[x]) {
             foundPrimeNumbers.emplace_back(x);
-            for (auto multiplierOfX = (x + x); multiplierOfX < maxNumber; multiplierOfX += x) {
+            for (auto multiplierOfX = 2 * x; multiplierOfX < maxNumber; multiplierOfX += x) {
                 sieve[multiplierOfX] = true;
             }
         }
@@ -40,6 +40,7 @@ auto findFirstDividend(Number primeNumber, Number minNumber) {
         firstDividend += primeNumber;
     }
 
+    firstDividend = std::max(firstDividend, primeNumber * primeNumber);
     assert(firstDividend >= minNumber);
     return firstDividend;
 }
@@ -57,8 +58,7 @@ auto findPrimeNumbersInRange(const std::vector<Number> &basePrimes,
     sieve.resize(maxNumber - minNumber);
 
     for (auto basePrime: basePrimes) {
-        for (auto x = findFirstDividend(basePrime, minNumber); x < maxNumber; x += basePrime)
-        {
+        for (auto x = findFirstDividend(basePrime, minNumber); x < maxNumber; x += basePrime) {
             sieve[x - minNumber] = true;
         }
     }
