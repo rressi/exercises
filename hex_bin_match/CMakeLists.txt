@@ -1,7 +1,9 @@
 
-add_executable(test_hex_bin_match
+add_executable(
 
+        test_hex_bin_match
         hex_bin_match.cpp
+        hex_bin_match.h
         hex_bin_match.t.cpp
 
         )

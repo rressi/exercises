@@ -1,7 +1,9 @@
 
-add_executable(test_edit_distance
+add_executable(
 
+        test_edit_distance
         edit_distance.cpp
+        edit_distance.h
         edit_distance.t.cpp
 
         )
