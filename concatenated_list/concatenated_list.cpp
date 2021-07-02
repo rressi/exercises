@@ -1,19 +1,24 @@
-#include "reverse_concatenated_list.h"
+#include "concatenated_list.h"
 
 #include <cassert>
 
-namespace reverse_concatenated_list {
+namespace concatenated_list {
 
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
 
     auto newNode = std::make_unique<ListNode>();
     newNode->value = std::move(value);
-    newNode->next = std::move(tail);
+    assert(newNode->size == 1);
+
+    if (tail) {
+        newNode->size += tail->size;
+        newNode->next = std::move(tail);
+    }
 
     return newNode;
 }
 
-auto createList( std::vector<std::string> values) -> Ptr<ListNode> {
+auto createList(std::vector<std::string> values) -> Ptr<ListNode> {
 
     auto head = Ptr<ListNode>();
 
@@ -27,13 +32,15 @@ auto createList( std::vector<std::string> values) -> Ptr<ListNode> {
 auto reverseList(Ptr<ListNode> head) -> Ptr<ListNode> {
 
     auto a = std::move(head);
-
     if (a) {
         auto b = std::move(a->next);
+
+        a->size = 1;
         assert(a->next == nullptr);
 
         while (b) {
             auto c = std::move(b->next);
+            b->size = 1 + a->size;
             b->next = std::move(a);
             a = std::move(b);
             b = std::move(c);
@@ -65,5 +72,18 @@ auto compareLists(const ListNode &a, const ListNode &b) -> int {
     return 0;
 }
 
+auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode * {
 
-} // namespace reverse_concatenated_list
+
+    auto targetSize = (n + 1);
+
+    auto itA = &a;
+    while (itA && itA->size > targetSize) {
+        itA = itA->next.get();
+    }
+
+    return (itA && itA->size == targetSize) ? itA
+                                            : nullptr;
+}
+
+} // namespace concatenated_list
