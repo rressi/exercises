@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(edit_distance)
 add_subdirectory(hex_bin_match)
+add_subdirectory(find_n_best)
 add_subdirectory(reverse_concatenated_list)
 add_subdirectory(sieve_of_eratosthenes)
 
