@@ -55,4 +55,26 @@ auto ReverseConcatenatedList::getTestName(
     return name;
 }
 
+class FindNLastNode : public ::testing::Test {
+};
+
+TEST_F(FindNLastNode, findNLastNode_base) {
+
+    auto values = std::vector<std::string>{"a", "b", "c", "d", "e", "f"};
+    auto list = createList(values);
+
+    for (auto n = 0; n < values.size(); n++) {
+        auto expectedValue = values.at(values.size() - 1 - n);
+        SCOPED_TRACE("with expected value: " + expectedValue);
+
+        auto nLast = findNLastNode(*list, n);
+        EXPECT_TRUE(nLast);
+        if (nLast) {
+            EXPECT_EQ(expectedValue, nLast->value);
+        }
+    }
+
+    EXPECT_FALSE(findNLastNode(*list, values.size()));
+}
+
 } // namespace concatenated_list

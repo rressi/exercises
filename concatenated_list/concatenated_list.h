@@ -10,7 +10,7 @@ using Ptr = std::unique_ptr<T>;
 
 struct ListNode {
     std::string value{};
-    std::size_t size{1};
+    std::size_t size{};
     Ptr<ListNode> next{};
 };
 
