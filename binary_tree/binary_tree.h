@@ -21,5 +21,8 @@ auto createBinaryTree(const std::vector<std::string> &values) -> Ptr<BinaryTreeN
 auto createBinaryTree(std::vector<std::string>::const_iterator begin,
                       std::vector<std::string>::const_iterator end) -> Ptr<BinaryTreeNode>;
 
+bool isSubTree(const Ptr<BinaryTreeNode> &container, const Ptr<BinaryTreeNode> &contained);
+bool isSubTree(const BinaryTreeNode *container, BinaryTreeNode *contained);
+
 } // namespace binary_tree
 
