@@ -1,12 +1,16 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 namespace binary_tree {
 
 template<class T>
 using Ptr = std::unique_ptr<T>;
+
+template<class T>
+using Opt = std::optional<T>;
 
 struct BinaryTreeNode {
     std::string value{};
@@ -22,7 +26,13 @@ auto createBinaryTree(std::vector<std::string>::const_iterator begin,
                       std::vector<std::string>::const_iterator end) -> Ptr<BinaryTreeNode>;
 
 bool isSubTree(const Ptr<BinaryTreeNode> &container, const Ptr<BinaryTreeNode> &contained);
+
 bool isSubTree(const BinaryTreeNode *container, BinaryTreeNode *contained);
+
+bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
+                        const Opt<std::string> &minValue = {},
+                        const Opt<std::string> &maxValue = {});
+
 
 } // namespace binary_tree
 

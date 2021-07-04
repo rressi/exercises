@@ -53,5 +53,21 @@ bool isSubTree(const BinaryTreeNode *container, BinaryTreeNode *contained) {
     }
 }
 
+bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
+                        const Opt<std::string> &minValue,
+                        const Opt<std::string> &maxValue) {
+    if (tree) {
+        if (minValue && tree->value < minValue) {
+            return false;
+        } else if (maxValue && tree->value > maxValue) {
+            return false;
+        } else {
+            return isBinarySearchTree(tree->left, minValue, tree->value)
+                   && isBinarySearchTree(tree->right, tree->value, maxValue);
+        }
+    } else {
+        return true;
+    }
+}
 
 } // namespace binary_tree
