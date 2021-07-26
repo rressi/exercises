@@ -5,15 +5,16 @@
 
 namespace dynamic_programming {
 
-struct TestCase {
+struct UnitThreeSteps_TestCase {
     int input{};
     int expectedOutcome{};
 };
 
 
-class UnitThreeSteps : public ::testing::TestWithParam<TestCase> {
+class UnitThreeSteps : public ::testing::TestWithParam<UnitThreeSteps_TestCase> {
 
 public:
+    using TestCase = UnitThreeSteps_TestCase;
     static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string;
 
 };
@@ -27,14 +28,14 @@ INSTANTIATE_TEST_SUITE_P(UnitThreeSteps,
                          UnitThreeSteps,
                          testing::Values(
 
-                                 TestCase{},
-                                 TestCase{1, 1},
-                                 TestCase{2, 2},
-                                 TestCase{3, 3},
-                                 TestCase{4, 6},
-                                 TestCase{5, 11},
-                                 TestCase{6, 20},
-                                 TestCase{7, 37}
+                                 UnitThreeSteps_TestCase{},
+                                 UnitThreeSteps_TestCase{1, 1},
+                                 UnitThreeSteps_TestCase{2, 2},
+                                 UnitThreeSteps_TestCase{3, 3},
+                                 UnitThreeSteps_TestCase{4, 6},
+                                 UnitThreeSteps_TestCase{5, 11},
+                                 UnitThreeSteps_TestCase{6, 20},
+                                 UnitThreeSteps_TestCase{7, 37}
 
                          ),
                          &UnitThreeSteps::getTestName);
