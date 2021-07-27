@@ -1,103 +1,79 @@
 #include "robot_navigator.h"
 
 namespace dynamic_programming::robot_navigator {
+namespace {
 
-
-bool Pos::operator==(const Pos &other) const {
-    return x == other.x && y == other.y;
-}
-
-[[nodiscard]] auto Pos::left() const -> Pos {
-    return Pos{x - 1, y};
-}
-
-[[nodiscard]] auto Pos::up() const -> Pos {
-    return Pos{x, y - 1};
-}
-
-class RobotNavigator {
+class Grid {
 
 public:
-    explicit RobotNavigator(Blockers blockers)
+    explicit Grid(Blockers blockers)
             : blockers_(std::move(blockers)) {
-        height = int(blockers_.size());
-        if (height > 0) {
-            width = int(blockers_.front().size());
+        height_ = int(blockers_.size());
+        if (height_ > 0) {
+            width_ = int(blockers_.front().size());
         }
     }
 
-    [[nodiscard]] auto getWidth() const -> int {
-        return width;
+    [[nodiscard]] auto width() const -> int { return width_; }
+
+    [[nodiscard]] auto height() const -> int { return height_; }
+
+    [[nodiscard]] bool isBlocked(const Pos &pos) const {
+        if (pos.y >= 0 && pos.y < height_) {
+            if (pos.x >= 0 && pos.x < width_) {
+                return blockers_[pos.y][pos.x];
+            }
+        }
+        return true;
     }
 
-    [[nodiscard]] auto getHeight() const -> int {
-        return height;
+    void setBlocked(const Pos &pos) {
+        if (pos.y >= 0 && pos.y < height_) {
+            if (pos.x >= 0 && pos.x < width_) {
+                blockers_[pos.y][pos.x] = true;
+            }
+        }
     }
-
-    [[nodiscard]] auto findRoute(Pos from, Pos to) -> Opt<Path>;
 
 private:
-
-    [[nodiscard]] bool isValid(const Pos &pos) const;
-
-    void invalidate(const Pos &pos);
-
     Blockers blockers_{};
-    int width{};
-    int height{};
+    int width_{};
+    int height_{};
 };
 
-auto RobotNavigator::findRoute(Pos from, Pos to) -> Opt<Path> {
+auto findPathRecursion(
+        Grid *grid, const Pos &goal) -> Opt<Path> {
 
-    if (this->isValid(to)) {
-        if (from == to) {
-            return Path{from};
-        }
+    if (grid->isBlocked(goal)) return {};
 
-        if (to.x > from.x) {
-            if (this->isValid(to.left())) {
-                if (auto path = this->findRoute(from, to.left())) {
-                    path->push_back(to);
-                    return path;
-                }
-            }
-        }
-        if (to.y > from.y) {
-            if (this->isValid(to.up())) {
-                if (auto path = this->findRoute(from, to.up())) {
-                    path->push_back(to);
-                    return path;
-                }
-            }
-        }
+    if (goal == Pos{}) {
+        return Path{goal};
     }
 
-    this->invalidate(to);
+    if (auto path = findPathRecursion(grid, Pos{goal.x - 1, goal.y})) {
+        path->push_back(goal);
+        if (path) return path;
+    }
+
+    if (auto path = findPathRecursion(grid, Pos{goal.x, goal.y - 1})) {
+        path->push_back(goal);
+        if (path) return path;
+    }
+
+    grid->setBlocked(goal);
     return {};
 }
 
-bool RobotNavigator::isValid(const Pos &pos) const {
-    if (pos.y >= 0 && pos.y < int(this->blockers_.size())) {
-        const auto &row = this->blockers_.at(pos.y);
-        if (pos.x >= 0 && pos.x < int(row.size())) {
-            return !row.at(pos.x);
-        }
-    }
-    return false;
-}
+} // namespace
 
-void RobotNavigator::invalidate(const Pos &pos) {
-    if (pos.y >= 0 && pos.y < int(this->blockers_.size())) {
-        auto &row = this->blockers_.at(pos.y);
-        if (pos.x >= 0 && pos.x < int(row.size())) {
-            row.at(pos.x) = true;
-        }
-    }
-}
+auto findPath(Blockers blockers) -> Opt<Path> {
+    auto grid = Grid(std::move(blockers));
+    auto goal = Pos{
+            std::max(0, grid.width() - 1),
+            std::max(0, grid.height() - 1)
+    };
 
-auto findRoute(Blockers blockers) -> Opt<Path> {
-    auto navigator = RobotNavigator(std::move(blockers));
-    return navigator.findRoute({}, {navigator.getWidth() - 1, navigator.getHeight() - 1});
+    return findPathRecursion(&grid, goal);
 }
 
 } // namespace dynamic_programming

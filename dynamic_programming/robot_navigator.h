@@ -5,25 +5,22 @@
 
 namespace dynamic_programming::robot_navigator {
 
-template<class T>
-using Opt = std::optional<T>;
-
 struct Pos {
     int x{};
     int y{};
-
-    bool operator==(const Pos &other) const;
-
-    [[nodiscard]] auto left() const -> Pos;
-
-    [[nodiscard]] auto up() const -> Pos;
 };
 
-using Path = std::vector<Pos>;
+inline bool operator==(const Pos &a, const Pos &b) {
+    return a.x == b.x && a.y == b.y;
+}
 
 using Blockers = std::vector<std::vector<bool>>;
 
-auto findRoute(Blockers blockers) -> Opt<Path>;
+using Path = std::vector<Pos>;
 
+template<class T>
+using Opt = std::optional<T>;
+
+auto findPath(Blockers blockers) -> Opt<Path>;
 
 } // namespace dynamic_programming::robot_navigator

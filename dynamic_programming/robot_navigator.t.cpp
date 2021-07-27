@@ -24,7 +24,7 @@ public:
 TEST_P(UnitRobotNavigator, test) {
     const auto &param = UnitRobotNavigator::GetParam();
 
-    EXPECT_EQ(param.expectedOutcome, findRoute(param.inputGrid));
+    EXPECT_EQ(param.expectedOutcome, findPath(param.inputGrid));
 }
 
 INSTANTIATE_TEST_SUITE_P(UnitRobotNavigator,
