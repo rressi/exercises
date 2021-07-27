@@ -3,42 +3,27 @@
 #include <vector>
 #include <optional>
 
-namespace dynamic_programming {
+namespace dynamic_programming::robot_navigator {
 
 template<class T>
 using Opt = std::optional<T>;
 
-class RobotNavigator {
+struct Pos {
+    int x{};
+    int y{};
 
-public:
-    enum class Cell {
-        Valid,
-        Invalid
-    };
-    using Grid = std::vector<std::vector<Cell>>;
+    bool operator==(const Pos &other) const;
 
-    explicit RobotNavigator(Grid grid);
+    [[nodiscard]] auto left() const -> Pos;
 
-    struct Pos {
-        int x{};
-        int y{};
-
-        bool operator==(const Pos& other) const;
-        [[nodiscard]] auto left() const -> Pos;
-        [[nodiscard]] auto up() const -> Pos;
-    };
-    using Path = std::vector<Pos>;
-
-    [[nodiscard]] auto findRoute(Pos from, Pos to) -> Opt<Path>;
-
-private:
-
-    [[nodiscard]] bool isValid(const Pos &pos) const;
-
-    void invalidate(const Pos &pos);
-
-    Grid grid{};
-
+    [[nodiscard]] auto up() const -> Pos;
 };
 
-} // namespace dynamic_programming
+using Path = std::vector<Pos>;
+
+using Blockers = std::vector<std::vector<bool>>;
+
+auto findRoute(Blockers blockers) -> Opt<Path>;
+
+
+} // namespace dynamic_programming::robot_navigator
