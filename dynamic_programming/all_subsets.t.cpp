@@ -51,7 +51,8 @@ INSTANTIATE_TEST_SUITE_P(UnitAllSubsets,
                                                            {0, 2, 3}, {0, 3}, {1}, {1, 2}, {1, 2, 3}, {1, 3}, {2},
                                                            {2, 3}, {3}}},
 
-                                 UnitAllSubsets::TestCase{10, 1UL << 10}
+                                 UnitAllSubsets::TestCase{10, 1UL << 10},
+                                 UnitAllSubsets::TestCase{15, 1UL << 15}
 
                          ),
                          &UnitAllSubsets::getTestName);
