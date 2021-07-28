@@ -3,6 +3,9 @@ add_executable(
 
         dynamic_programming
 
+        all_subsets.h
+        all_subsets.t.cpp
+
         robot_navigator.cpp
         robot_navigator.h
         robot_navigator.t.cpp
