@@ -44,7 +44,7 @@ TYPED_TEST(UnitFindNBest, testFindNBest) {
     using Value = typename Container::value_type;
 
     auto values = this->generateValues(NUM_VALUES);
-    auto actualBiggestValues = findBiggest(values, NUM_BIGGEST_VALUES);
+    auto actualBiggestValues = findBiggestItems(values, NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
 
     auto expectedBiggestValues = std::vector<Value>(values.begin(), values.end());
@@ -54,6 +54,26 @@ TYPED_TEST(UnitFindNBest, testFindNBest) {
 
     EXPECT_EQ(expectedBiggestValues, actualBiggestValues);
 }
+
+TYPED_TEST(UnitFindNBest, testFindNBestWithHeap) {
+    constexpr auto NUM_VALUES = 10'000;
+    constexpr auto NUM_BIGGEST_VALUES = 100;
+
+    using Container = TypeParam;
+    using Value = typename Container::value_type;
+
+    auto values = this->generateValues(NUM_VALUES);
+    auto actualBiggestValues = findBiggestItemsWithHeap(values, NUM_BIGGEST_VALUES);
+    EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
+
+    auto expectedBiggestValues = std::vector<Value>(values.begin(), values.end());
+    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(), std::greater<Value>());
+    expectedBiggestValues.resize(NUM_BIGGEST_VALUES);
+    EXPECT_EQ(NUM_BIGGEST_VALUES, expectedBiggestValues.size());
+
+    EXPECT_EQ(expectedBiggestValues, actualBiggestValues);
+}
+
 
 using RandomGenerator = std::mt19937_64;
 
@@ -68,7 +88,7 @@ auto generateValue<std::string>(RandomGenerator *randomGenerator) -> std::string
 
     auto size = std::size_t(randomGenerator->operator()() % 20);
     for (auto i = 0U; i < size; i++) {
-        auto ch = char('A') + char(randomGenerator->operator()() % ('Z' - 'A' + 1));
+        auto ch = char('A' + randomGenerator->operator()() % ('Z' - 'A' + 1));
         x.push_back(ch);
     }
 
