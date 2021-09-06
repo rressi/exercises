@@ -9,6 +9,7 @@ add_subdirectory(dynamic_programming)
 add_subdirectory(edit_distance)
 add_subdirectory(hex_bin_match)
 add_subdirectory(find_n_best)
+add_subdirectory(graph)
 add_subdirectory(sieve_of_eratosthenes)
 
 
