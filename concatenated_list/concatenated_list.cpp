@@ -22,8 +22,9 @@ auto createList(std::vector<std::string> values) -> Ptr<ListNode> {
 
     auto head = Ptr<ListNode>();
 
-    for (auto it = values.rbegin(); it != values.rend(); it++) {
-        head = createNode(std::move(*it), std::move(head));
+    while(!values.empty()) {
+        head = createNode(std::move(values.back()), std::move(head));
+        values.pop_back();
     }
 
     return head;
