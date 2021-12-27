@@ -24,4 +24,3 @@ auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode *;
 
 
 } // namespace concatenated_list
-
