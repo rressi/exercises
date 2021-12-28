@@ -83,4 +83,27 @@ auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode * {
                                    : nullptr;
 }
 
+void traverseList(const ListNode& head, const ValueCallback& valueCallback) {
+    auto node = &head;
+    while (node) {
+        valueCallback(node->value);
+        node = node->next.get();
+    }
+}
+
+void traverseListInReverseOrder(const ListNode& head, const ValueCallback& valueCallback) {
+
+    auto stack = std::vector<std::string>();
+    stack.reserve(head.size);
+
+    traverseList(head, [&stack](const std::string& value){
+        stack.push_back(value);
+    });
+
+    while (!stack.empty()) {
+        valueCallback(stack.back());
+        stack.pop_back();
+    }
+}
+
 } // namespace concatenated_list

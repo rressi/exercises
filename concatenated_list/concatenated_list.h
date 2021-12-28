@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -22,5 +23,8 @@ auto compareLists(const ListNode &a, const ListNode &b) -> int;
 
 auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode *;
 
+using ValueCallback = std::function<void(const std::string &)>;
+void traverseList(const ListNode& head, const ValueCallback& valueCallback);
+void traverseListInReverseOrder(const ListNode& head, const ValueCallback& valueCallback);
 
 } // namespace concatenated_list
