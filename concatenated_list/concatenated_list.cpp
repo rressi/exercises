@@ -3,6 +3,7 @@
 #include <cassert>
 #include <set>
 
+
 namespace concatenated_list {
 
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
@@ -129,6 +130,69 @@ void removeDuplicates(ListNode* head) {
         }
         node = node->next.get();
     }
+}
+
+auto splitListInTwoHalves(Ptr<ListNode> head)
+    -> std::tuple<Ptr<ListNode>, Ptr<ListNode>> {
+    if (!head) return {};
+
+    auto fastRunner = head.get();
+    auto slowRunner = head.get();
+
+    auto i = 0;
+    while (fastRunner->next) {
+        fastRunner = fastRunner->next.get();
+        if (i & 1) {
+            slowRunner = slowRunner->next.get();
+        }
+        i++;
+    }
+
+    auto tail = std::move(slowRunner->next);
+    slowRunner->next = nullptr;
+
+    return std::make_tuple(std::move(head), std::move(tail));
+}
+
+auto _mergeSortStep(Ptr<ListNode> a, Ptr<ListNode> b) -> Ptr<ListNode> {
+    if (!a) return b;
+    if (!b) return a;
+
+    if (a->value > b->value) {
+        std::swap(a, b);
+    }
+
+    auto mergedHead = std::move(a);
+    a = std::move(mergedHead->next);
+
+    auto mergedTail = &mergedHead;
+    while (a && b) {
+        if (a->value > b->value) {
+            std::swap(a, b);
+        }
+
+        (*mergedTail)->next = std::move(a);
+        mergedTail = &((*mergedTail)->next);
+        a = std::move((*mergedTail)->next);
+    }
+
+    if (a) {
+        (*mergedTail)->next = std::move(a);
+    } else if (b) {
+        (*mergedTail)->next = std::move(b);
+    }
+
+    return mergedHead;
+}
+
+auto mergeSort(Ptr<ListNode> list) -> Ptr<ListNode> {
+    if (!list) return {};
+    if (!list->next) return list;
+
+    auto [head, tail] = splitListInTwoHalves(std::move(list));
+    head = mergeSort(std::move(head));
+    tail = mergeSort(std::move(tail));
+    return _mergeSortStep(std::move(head), std::move(tail));
 }
 
 }  // namespace concatenated_list
