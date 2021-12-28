@@ -10,13 +10,14 @@ auto createBinaryTreeNode(std::string value) -> Ptr<BinaryTreeNode> {
     return newNode;
 }
 
-auto createBinaryTree(const std::vector<std::string> &values) -> Ptr<BinaryTreeNode> {
+auto createBinaryTree(const std::vector<std::string> &values)
+    -> Ptr<BinaryTreeNode> {
     return createBinaryTree(values.begin(), values.end());
 }
 
 auto createBinaryTree(std::vector<std::string>::const_iterator begin,
-                      std::vector<std::string>::const_iterator end) -> Ptr<BinaryTreeNode> {
-
+                      std::vector<std::string>::const_iterator end)
+    -> Ptr<BinaryTreeNode> {
     if (begin >= end) {
         return {};
     }
@@ -30,19 +31,20 @@ auto createBinaryTree(std::vector<std::string>::const_iterator begin,
     return root;
 }
 
-bool isSubTree(const Ptr<BinaryTreeNode> &container, const Ptr<BinaryTreeNode> &contained) {
+bool isSubTree(const Ptr<BinaryTreeNode> &container,
+               const Ptr<BinaryTreeNode> &contained) {
     return isSubTree(container.get(), contained.get());
 }
 
 bool isSubTree(const BinaryTreeNode *container, BinaryTreeNode *contained) {
     if (container && contained) {
-        if (container->value == contained->value
-            && isSubTree(container->left.get(), contained->left.get())
-            && isSubTree(container->right.get(), contained->right.get())) {
+        if (container->value == contained->value &&
+            isSubTree(container->left.get(), contained->left.get()) &&
+            isSubTree(container->right.get(), contained->right.get())) {
             return true;
         } else {
-            return isSubTree(container->left.get(), contained)
-                   || isSubTree(container->right.get(), contained);
+            return isSubTree(container->left.get(), contained) ||
+                   isSubTree(container->right.get(), contained);
         }
     } else if (container) {
         return true;
@@ -62,12 +64,12 @@ bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
         } else if (maxValue && tree->value > maxValue) {
             return false;
         } else {
-            return isBinarySearchTree(tree->left, minValue, tree->value)
-                   && isBinarySearchTree(tree->right, tree->value, maxValue);
+            return isBinarySearchTree(tree->left, minValue, tree->value) &&
+                   isBinarySearchTree(tree->right, tree->value, maxValue);
         }
     } else {
         return true;
     }
 }
 
-} // namespace binary_tree
+}  // namespace binary_tree

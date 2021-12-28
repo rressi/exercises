@@ -4,10 +4,8 @@ namespace dynamic_programming::robot_navigator {
 namespace {
 
 class Grid {
-
-public:
-    explicit Grid(Blockers blockers)
-            : blockers_(std::move(blockers)) {
+   public:
+    explicit Grid(Blockers blockers) : blockers_(std::move(blockers)) {
         height_ = int(blockers_.size());
         if (height_ > 0) {
             width_ = int(blockers_.front().size());
@@ -35,15 +33,13 @@ public:
         }
     }
 
-private:
+   private:
     Blockers blockers_{};
     int width_{};
     int height_{};
 };
 
-auto findPathRecursion(
-        Grid *grid, const Pos &goal) -> Opt<Path> {
-
+auto findPathRecursion(Grid *grid, const Pos &goal) -> Opt<Path> {
     if (grid->isBlocked(goal)) return {};
 
     if (goal == Pos{}) {
@@ -64,16 +60,14 @@ auto findPathRecursion(
     return {};
 }
 
-} // namespace
+}  // namespace
 
 auto findPath(Blockers blockers) -> Opt<Path> {
     auto grid = Grid(std::move(blockers));
-    auto goal = Pos{
-            std::max(0, grid.width() - 1),
-            std::max(0, grid.height() - 1)
-    };
+    auto goal =
+        Pos{std::max(0, grid.width() - 1), std::max(0, grid.height() - 1)};
 
     return findPathRecursion(&grid, goal);
 }
 
-} // namespace dynamic_programming
+}  // namespace dynamic_programming::robot_navigator

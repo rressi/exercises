@@ -2,19 +2,13 @@
 
 #include <algorithm>
 
-
 namespace hex_bin_match {
 
-bool matchHexAndBin(HexStringView hex,
-                    BinStringView bin) {
-
+bool matchHexAndBin(HexStringView hex, BinStringView bin) {
     constexpr auto BITS_PER_HEX_DIGIT = 4;
 
     unsigned x = 0U, y = 0U;
-    while (x == y
-           && !hex.empty()
-           && !bin.empty()) {
-
+    while (x == y && !hex.empty() && !bin.empty()) {
         std::tie(x, hex) = readHexDigit(hex);
         std::tie(y, bin) = readBinDigits(bin, BITS_PER_HEX_DIGIT);
     }
@@ -23,12 +17,11 @@ bool matchHexAndBin(HexStringView hex,
 }
 
 auto readBinDigits(BinStringView bin, unsigned n)
--> std::tuple<unsigned, BinStringView> {
-
+    -> std::tuple<unsigned, BinStringView> {
     n = std::min(n, unsigned(bin.size()));
     if (n > sizeof(unsigned) * 8) {
         throw std::runtime_error(
-                "I cannot fit N digits into an unsigned number");
+            "I cannot fit N digits into an unsigned number");
     }
 
     unsigned x = 0U;
@@ -40,9 +33,7 @@ auto readBinDigits(BinStringView bin, unsigned n)
     return {x, bin};
 }
 
-auto readHexDigit(HexStringView hex)
--> std::tuple<unsigned, HexStringView> {
-
+auto readHexDigit(HexStringView hex) -> std::tuple<unsigned, HexStringView> {
     if (hex.empty()) return {};
 
     auto x = decodeHexDigit(hex.back());
@@ -52,7 +43,6 @@ auto readHexDigit(HexStringView hex)
 }
 
 unsigned decodeBinDigit(char digit) {
-
     switch (digit) {
         case '0':
             return 0;
@@ -61,11 +51,9 @@ unsigned decodeBinDigit(char digit) {
         default:
             throw std::runtime_error("Not a binary digit");
     }
-
 }
 
 auto decodeHexDigit(char digit) -> unsigned {
-
     switch (digit) {
         case '0':
             return 0;
@@ -112,7 +100,6 @@ auto decodeHexDigit(char digit) -> unsigned {
         default:
             throw std::runtime_error("Not an hexadecimal digit");
     }
-
 }
 
-} // namespace hex_bin_match
+}  // namespace hex_bin_match

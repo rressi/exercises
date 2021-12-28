@@ -1,19 +1,17 @@
 
-#include "find_n_best.h"
-
 #include <gtest/gtest.h>
 
 #include <list>
 #include <random>
 #include <string>
 
+#include "find_n_best.h"
 
 namespace find_n_best {
 
-template<class Container>
+template <class Container>
 class UnitFindNBest : public ::testing::Test {
-
-protected:
+   protected:
     using Value = typename Container::value_type;
 
     auto generateValues(std::size_t numValues) -> Container;
@@ -21,19 +19,14 @@ protected:
 
 using ContainerTypes = ::testing::Types<
 
-        std::vector<int>,
-        std::list<int>,
-        std::deque<int>,
+    std::vector<int>, std::list<int>, std::deque<int>,
 
-        std::vector<std::uint64_t>,
-        std::list<std::uint64_t>,
-        std::deque<std::uint64_t>,
+    std::vector<std::uint64_t>, std::list<std::uint64_t>,
+    std::deque<std::uint64_t>,
 
-        std::vector<std::string>,
-        std::list<std::string>,
-        std::deque<std::string>
+    std::vector<std::string>, std::list<std::string>, std::deque<std::string>
 
->;
+    >;
 TYPED_TEST_SUITE(UnitFindNBest, ContainerTypes);
 
 TYPED_TEST(UnitFindNBest, testFindNBest) {
@@ -47,8 +40,10 @@ TYPED_TEST(UnitFindNBest, testFindNBest) {
     auto actualBiggestValues = findBiggestItems(values, NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
 
-    auto expectedBiggestValues = std::vector<Value>(values.begin(), values.end());
-    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(), std::greater<Value>());
+    auto expectedBiggestValues =
+        std::vector<Value>(values.begin(), values.end());
+    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(),
+              std::greater<Value>());
     expectedBiggestValues.resize(NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, expectedBiggestValues.size());
 
@@ -63,27 +58,30 @@ TYPED_TEST(UnitFindNBest, testFindNBestWithHeap) {
     using Value = typename Container::value_type;
 
     auto values = this->generateValues(NUM_VALUES);
-    auto actualBiggestValues = findBiggestItemsWithHeap(values, NUM_BIGGEST_VALUES);
+    auto actualBiggestValues =
+        findBiggestItemsWithHeap(values, NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
 
-    auto expectedBiggestValues = std::vector<Value>(values.begin(), values.end());
-    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(), std::greater<Value>());
+    auto expectedBiggestValues =
+        std::vector<Value>(values.begin(), values.end());
+    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(),
+              std::greater<Value>());
     expectedBiggestValues.resize(NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, expectedBiggestValues.size());
 
     EXPECT_EQ(expectedBiggestValues, actualBiggestValues);
 }
 
-
 using RandomGenerator = std::mt19937_64;
 
-template<class X>
+template <class X>
 auto generateValue(RandomGenerator *randomGenerator) -> X {
     return X(randomGenerator->operator()());
 }
 
-template<>
-auto generateValue<std::string>(RandomGenerator *randomGenerator) -> std::string {
+template <>
+auto generateValue<std::string>(RandomGenerator *randomGenerator)
+    -> std::string {
     auto x = std::string();
 
     auto size = std::size_t(randomGenerator->operator()() % 20);
@@ -95,8 +93,9 @@ auto generateValue<std::string>(RandomGenerator *randomGenerator) -> std::string
     return x;
 }
 
-template<class Container>
-auto UnitFindNBest<Container>::generateValues(std::size_t numValues) -> Container {
+template <class Container>
+auto UnitFindNBest<Container>::generateValues(std::size_t numValues)
+    -> Container {
     auto values = Container();
 
     auto randomGenerator = RandomGenerator(4242);
@@ -108,4 +107,4 @@ auto UnitFindNBest<Container>::generateValues(std::size_t numValues) -> Containe
     return values;
 }
 
-} // namespace find_n_best
+}  // namespace find_n_best

@@ -16,7 +16,6 @@ auto getNumberOfCpus() -> unsigned {
 }
 
 auto findPrimeNumbersSequentially(Number maxNumber) -> std::vector<Number> {
-
     auto foundPrimeNumbers = std::vector<Number>();
 
     std::vector<bool> sieve;
@@ -25,7 +24,8 @@ auto findPrimeNumbersSequentially(Number maxNumber) -> std::vector<Number> {
     for (auto x = 2; x < maxNumber; x++) {
         if (!sieve[x]) {
             foundPrimeNumbers.emplace_back(x);
-            for (auto multiplierOfX = 2 * x; multiplierOfX < maxNumber; multiplierOfX += x) {
+            for (auto multiplierOfX = 2 * x; multiplierOfX < maxNumber;
+                 multiplierOfX += x) {
                 sieve[multiplierOfX] = true;
             }
         }
@@ -46,9 +46,8 @@ auto findFirstDividend(Number primeNumber, Number minNumber) {
 }
 
 auto findPrimeNumbersInRange(const std::vector<Number> &basePrimes,
-                             Number minNumber,
-                             Number maxNumber) -> std::vector<Number> {
-
+                             Number minNumber, Number maxNumber)
+    -> std::vector<Number> {
     assert(!basePrimes.empty());
     assert(minNumber < maxNumber);
 
@@ -57,8 +56,9 @@ auto findPrimeNumbersInRange(const std::vector<Number> &basePrimes,
     std::vector<bool> sieve;
     sieve.resize(maxNumber - minNumber);
 
-    for (auto basePrime: basePrimes) {
-        for (auto x = findFirstDividend(basePrime, minNumber); x < maxNumber; x += basePrime) {
+    for (auto basePrime : basePrimes) {
+        for (auto x = findFirstDividend(basePrime, minNumber); x < maxNumber;
+             x += basePrime) {
             sieve[x - minNumber] = true;
         }
     }
@@ -72,15 +72,14 @@ auto findPrimeNumbersInRange(const std::vector<Number> &basePrimes,
     return foundPrimeNumbers;
 }
 
-} // namespace
+}  // namespace
 
-auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads) -> std::vector<Number> {
+auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads)
+    -> std::vector<Number> {
+    auto numThreads = maxThreads ? maxThreads.value() : getNumberOfCpus();
 
-    auto numThreads = maxThreads ? maxThreads.value()
-                                 : getNumberOfCpus();
-
-    auto sequentialMaxNumbers = numThreads == 1 ? maxNumber
-                                                : std::min(maxNumber, Number(10'000));
+    auto sequentialMaxNumbers =
+        numThreads == 1 ? maxNumber : std::min(maxNumber, Number(10'000));
     if (sequentialMaxNumbers == maxNumber) {
         return findPrimeNumbersSequentially(sequentialMaxNumbers);
     }
@@ -93,28 +92,24 @@ auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads) -> std::vector
 
     auto partStart = firstPrimeNumbersMax;
     auto partSize = (maxNumber - partStart) / numThreads;
-    for (auto &task: tasks) {
-
+    for (auto &task : tasks) {
         bool isLastPart = (&task == &tasks.back());
-        auto partEnd = isLastPart ? maxNumber
-                                  : partStart + partSize;
+        auto partEnd = isLastPart ? maxNumber : partStart + partSize;
 
-        task = std::async(std::launch::async,
-                          findPrimeNumbersInRange,
-                          firstPrimeNumbers,
-                          partStart,
-                          partEnd);
+        task = std::async(std::launch::async, findPrimeNumbersInRange,
+                          firstPrimeNumbers, partStart, partEnd);
 
         partStart += partSize;
     }
 
     auto primeNumbers = firstPrimeNumbers;
-    for (auto &task: tasks) {
+    for (auto &task : tasks) {
         auto partResult = task.get();
-        primeNumbers.insert(primeNumbers.end(), partResult.begin(), partResult.end());
+        primeNumbers.insert(primeNumbers.end(), partResult.begin(),
+                            partResult.end());
     }
 
     return primeNumbers;
 }
 
-} // namespace sieve_of_eratosthenes
+}  // namespace sieve_of_eratosthenes

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <optional>
+#include <vector>
 
 namespace dynamic_programming::robot_navigator {
 
@@ -18,9 +18,9 @@ using Blockers = std::vector<std::vector<bool>>;
 
 using Path = std::vector<Pos>;
 
-template<class T>
+template <class T>
 using Opt = std::optional<T>;
 
 auto findPath(Blockers blockers) -> Opt<Path>;
 
-} // namespace dynamic_programming::robot_navigator
+}  // namespace dynamic_programming::robot_navigator
