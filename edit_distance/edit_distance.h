@@ -12,4 +12,4 @@ bool matchStrings(StringView s, StringView t, Distance maxDistance);
 
 auto calculateEditDistance(StringView s, StringView t) -> Distance;
 
-} // namespace edit_distance
+}  // namespace edit_distance

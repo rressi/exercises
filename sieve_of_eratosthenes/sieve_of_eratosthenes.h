@@ -7,9 +7,10 @@ namespace sieve_of_eratosthenes {
 
 using Number = unsigned int;
 
-template<class T>
+template <class T>
 using Opt = std::optional<T>;
 
-auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads = {}) -> std::vector<Number>;
+auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads = {})
+    -> std::vector<Number>;
 
-} // namespace sieve_of_eratosthenes
+}  // namespace sieve_of_eratosthenes

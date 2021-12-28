@@ -17,16 +17,13 @@ struct Runner {
 };
 
 bool has_path(const Graph &graph, const ColorList &colorList) {
-
     if (colorList.empty()) {
         return false;
     }
 
     auto firstColor = colorList.front();
     if (colorList.size() == 1) {
-
-        auto findIt = std::find_if(graph.begin(),
-                                   graph.end(),
+        auto findIt = std::find_if(graph.begin(), graph.end(),
                                    [firstColor](const Node &node) {
                                        return node.color == firstColor;
                                    });
@@ -40,17 +37,13 @@ bool has_path(const Graph &graph, const ColorList &colorList) {
         if (node.edges.empty()) continue;
 
         runners.push_back(Runner{
-                .colorQueue = ColorQueue{colorList.begin() + 1,
-                                         colorList.end()},
-                .edgeQueue = EdgeQueue{node.edges.begin(),
-                                       node.edges.end()},
-                .visitedSet = VisitedSet{edge}
-        });
+            .colorQueue = ColorQueue{colorList.begin() + 1, colorList.end()},
+            .edgeQueue = EdgeQueue{node.edges.begin(), node.edges.end()},
+            .visitedSet = VisitedSet{edge}});
     }
 
     while (!runners.empty()) {
-
-        for (auto &runner: runners) {
+        for (auto &runner : runners) {
             auto edge = runner.edgeQueue.front();
             runner.edgeQueue.pop_front();
 
@@ -65,22 +58,20 @@ bool has_path(const Graph &graph, const ColorList &colorList) {
             }
 
             runner.visitedSet.insert(edge);
-            for (auto nextEdge: node.edges) {
+            for (auto nextEdge : node.edges) {
                 if (runner.visitedSet.count(nextEdge) == 0) {
                     runner.edgeQueue.push_back(nextEdge);
                 }
             }
         }
 
-        auto it = std::remove_if(runners.begin(), runners.end(),
-                                 [](const Runner &runner) {
-                                     return runner.edgeQueue.empty();
-                                 });
+        auto it = std::remove_if(
+            runners.begin(), runners.end(),
+            [](const Runner &runner) { return runner.edgeQueue.empty(); });
         runners.resize(std::distance(runners.begin(), it));
     }
 
     return false;
 }
 
-
-} // namespace concatenated_list
+}  // namespace graph

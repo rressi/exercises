@@ -6,7 +6,6 @@
 namespace concatenated_list {
 
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
-
     auto newNode = std::make_unique<ListNode>();
     newNode->value = std::move(value);
     assert(newNode->size == 0);
@@ -20,10 +19,9 @@ auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
 }
 
 auto createList(std::vector<std::string> values) -> Ptr<ListNode> {
-
     auto head = Ptr<ListNode>();
 
-    while(!values.empty()) {
+    while (!values.empty()) {
         head = createNode(std::move(values.back()), std::move(head));
         values.pop_back();
     }
@@ -32,7 +30,6 @@ auto createList(std::vector<std::string> values) -> Ptr<ListNode> {
 }
 
 auto reverseList(Ptr<ListNode> head) -> Ptr<ListNode> {
-
     auto a = std::move(head);
     if (a) {
         auto b = std::move(a->next);
@@ -51,8 +48,7 @@ auto reverseList(Ptr<ListNode> head) -> Ptr<ListNode> {
     return a;
 }
 
-auto compareLists(const ListNode &a, const ListNode &b) -> int {
-
+auto compareLists(const ListNode& a, const ListNode& b) -> int {
     auto itA = &a;
     auto itB = &b;
     while (itA && itB) {
@@ -73,15 +69,13 @@ auto compareLists(const ListNode &a, const ListNode &b) -> int {
     return 0;
 }
 
-auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode * {
-
+auto findNLastNode(const ListNode& a, std::size_t n) -> const ListNode* {
     auto itA = &a;
     while (itA && itA->size > n) {
         itA = itA->next.get();
     }
 
-    return (itA && itA->size == n) ? itA
-                                   : nullptr;
+    return (itA && itA->size == n) ? itA : nullptr;
 }
 
 void traverseList(const ListNode& head, const ValueCallback& valueCallback) {
@@ -105,14 +99,13 @@ auto traverseList(const ListNode& head) -> std::vector<std::string> {
     return values;
 }
 
-void traverseListInReverseOrder(const ListNode& head, const ValueCallback& valueCallback) {
-
+void traverseListInReverseOrder(const ListNode& head,
+                                const ValueCallback& valueCallback) {
     auto stack = std::vector<std::string>();
     stack.reserve(head.size);
 
-    traverseList(head, [&stack](const std::string& value){
-        stack.push_back(value);
-    });
+    traverseList(
+        head, [&stack](const std::string& value) { stack.push_back(value); });
 
     while (!stack.empty()) {
         valueCallback(stack.back());
@@ -126,17 +119,16 @@ void removeNextNode(ListNode* node) {
     }
 }
 
-void removeDuplicates(ListNode *head) {
+void removeDuplicates(ListNode* head) {
     auto foundItems = std::set<std::string>();
     auto node = head;
-    while(node) {
+    while (node) {
         foundItems.insert(node->value);
-        while(node->next 
-                && foundItems.count(node->next->value)) {
+        while (node->next && foundItems.count(node->next->value)) {
             removeNextNode(node);
         }
         node = node->next.get();
     }
 }
 
-} // namespace concatenated_list
+}  // namespace concatenated_list

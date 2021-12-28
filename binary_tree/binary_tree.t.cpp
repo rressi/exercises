@@ -1,12 +1,11 @@
 
-#include "binary_tree.h"
-
 #include <gtest/gtest.h>
+
+#include "binary_tree.h"
 
 namespace binary_tree {
 
-class TestBinaryTree : public ::testing::Test {
-};
+class TestBinaryTree : public ::testing::Test {};
 
 TEST_F(TestBinaryTree, testCreateBinaryTree_evenNumItems) {
     auto tree = createBinaryTree({"a", "b", "c", "d", "e", "f"});
@@ -108,15 +107,18 @@ TEST_F(TestBinaryTree, testIsSubTree) {
 TEST_F(TestBinaryTree, testIsBinarySearchTree) {
     EXPECT_TRUE(isBinarySearchTree(createBinaryTree({})));
     EXPECT_TRUE(isBinarySearchTree(createBinaryTree({"z"})));
-    EXPECT_TRUE(isBinarySearchTree(createBinaryTree({"a", "b", "c", "d", "e", "f", "g"})));
-    EXPECT_TRUE(isBinarySearchTree(createBinaryTree({"b", "b", "b", "b", "b", "b", "b"})));
-    EXPECT_TRUE(isBinarySearchTree(createBinaryTree({"a", "c", "c", "d", "d", "f", "f", "g"})));
+    EXPECT_TRUE(isBinarySearchTree(
+        createBinaryTree({"a", "b", "c", "d", "e", "f", "g"})));
+    EXPECT_TRUE(isBinarySearchTree(
+        createBinaryTree({"b", "b", "b", "b", "b", "b", "b"})));
+    EXPECT_TRUE(isBinarySearchTree(
+        createBinaryTree({"a", "c", "c", "d", "d", "f", "f", "g"})));
 
     EXPECT_FALSE(isBinarySearchTree(createBinaryTree({"b", "a"})));
     EXPECT_FALSE(isBinarySearchTree(createBinaryTree({"a", "b", "a"})));
     EXPECT_FALSE(isBinarySearchTree(createBinaryTree({"a", "c", "b"})));
-    EXPECT_FALSE(isBinarySearchTree(createBinaryTree({"a", "a", "a", "b", "b", "a"})));
+    EXPECT_FALSE(
+        isBinarySearchTree(createBinaryTree({"a", "a", "a", "b", "b", "a"})));
 }
 
-
-} // namespace binary_tree
+}  // namespace binary_tree
