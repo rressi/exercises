@@ -25,6 +25,10 @@ auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode *;
 
 using ValueCallback = std::function<void(const std::string &)>;
 void traverseList(const ListNode& head, const ValueCallback& valueCallback);
+auto traverseList(const ListNode& head) -> std::vector<std::string>;
 void traverseListInReverseOrder(const ListNode& head, const ValueCallback& valueCallback);
+
+void removeNextNode(ListNode* node);
+void removeDuplicates(ListNode *head);
 
 } // namespace concatenated_list
