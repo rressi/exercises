@@ -1,6 +1,7 @@
 #include "concatenated_list.h"
 
 #include <cassert>
+#include <set>
 
 namespace concatenated_list {
 
@@ -81,6 +82,61 @@ auto findNLastNode(const ListNode &a, std::size_t n) -> const ListNode * {
 
     return (itA && itA->size == n) ? itA
                                    : nullptr;
+}
+
+void traverseList(const ListNode& head, const ValueCallback& valueCallback) {
+    auto node = &head;
+    while (node) {
+        valueCallback(node->value);
+        node = node->next.get();
+    }
+}
+
+auto traverseList(const ListNode& head) -> std::vector<std::string> {
+    auto values = std::vector<std::string>();
+    values.reserve(head.size);
+
+    auto node = &head;
+    while (node) {
+        values.push_back(node->value);
+        node = node->next.get();
+    }
+
+    return values;
+}
+
+void traverseListInReverseOrder(const ListNode& head, const ValueCallback& valueCallback) {
+
+    auto stack = std::vector<std::string>();
+    stack.reserve(head.size);
+
+    traverseList(head, [&stack](const std::string& value){
+        stack.push_back(value);
+    });
+
+    while (!stack.empty()) {
+        valueCallback(stack.back());
+        stack.pop_back();
+    }
+}
+
+void removeNextNode(ListNode* node) {
+    if (node->next) {
+        node->next = std::move(node->next->next);
+    }
+}
+
+void removeDuplicates(ListNode *head) {
+    auto foundItems = std::set<std::string>();
+    auto node = head;
+    while(node) {
+        foundItems.insert(node->value);
+        while(node->next 
+                && foundItems.count(node->next->value)) {
+            removeNextNode(node);
+        }
+        node = node->next.get();
+    }
 }
 
 } // namespace concatenated_list
