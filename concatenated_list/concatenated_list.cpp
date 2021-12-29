@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <set>
-#include <stdexcept>
 
 namespace concatenated_list {
 
@@ -153,9 +152,9 @@ auto splitListInTwoHalves(Ptr<ListNode> head)
     if (!head) return {};
 
     auto fastRunner = head.get();
+    auto slowRunner = fastRunner;
 
     auto i = 0;
-    auto slowRunner = fastRunner;
     while (fastRunner->next) {
         fastRunner = fastRunner->next.get();
         if (i & 1) {
