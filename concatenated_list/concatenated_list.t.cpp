@@ -6,6 +6,7 @@
 
 #include "concatenated_list.h"
 
+
 namespace concatenated_list {
 namespace {
 

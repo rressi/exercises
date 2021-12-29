@@ -8,10 +8,8 @@ namespace concatenated_list {
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
     auto newNode = std::make_unique<ListNode>();
     newNode->value = std::move(value);
-    assert(newNode->size == 0);
 
     if (tail) {
-        newNode->size += (1 + tail->size);
         newNode->next = std::move(tail);
     }
 
@@ -35,10 +33,8 @@ auto reverseList(Ptr<ListNode> head) -> Ptr<ListNode> {
         auto b = std::move(a->next);
         assert(a->next == nullptr);
 
-        a->size = 0;
         while (b) {
             auto c = std::move(b->next);
-            b->size = 1 + a->size;
             b->next = std::move(a);
             a = std::move(b);
             b = std::move(c);
@@ -70,12 +66,22 @@ auto compareLists(const ListNode& a, const ListNode& b) -> int {
 }
 
 auto findNLastNode(const ListNode& a, std::size_t n) -> const ListNode* {
-    auto itA = &a;
-    while (itA && itA->size > n) {
-        itA = itA->next.get();
+    auto fastRunner = &a;
+    while (n > 0 && fastRunner->next) {
+        fastRunner = fastRunner->next.get();
+        n--;
+    }
+    if (n > 0) {
+        return nullptr;
     }
 
-    return (itA && itA->size == n) ? itA : nullptr;
+    auto slowRunner = &a;
+    while (fastRunner->next) {
+        fastRunner = fastRunner->next.get();
+        slowRunner = slowRunner->next.get();
+    }
+
+    return slowRunner;
 }
 
 void traverseList(const ListNode& head, const ValueCallback& valueCallback) {
@@ -88,7 +94,6 @@ void traverseList(const ListNode& head, const ValueCallback& valueCallback) {
 
 auto traverseList(const ListNode& head) -> std::vector<std::string> {
     auto values = std::vector<std::string>();
-    values.reserve(head.size);
 
     auto node = &head;
     while (node) {
@@ -102,7 +107,6 @@ auto traverseList(const ListNode& head) -> std::vector<std::string> {
 void traverseListInReverseOrder(const ListNode& head,
                                 const ValueCallback& valueCallback) {
     auto stack = std::vector<std::string>();
-    stack.reserve(head.size);
 
     traverseList(
         head, [&stack](const std::string& value) { stack.push_back(value); });
@@ -148,7 +152,7 @@ auto splitListInTwoHalves(Ptr<ListNode> head)
     if (!head) return {};
 
     auto fastRunner = head.get();
-    auto slowRunner = head.get();
+    auto slowRunner = fastRunner;
 
     auto i = 0;
     while (fastRunner->next) {
@@ -165,7 +169,9 @@ auto splitListInTwoHalves(Ptr<ListNode> head)
     return std::make_tuple(std::move(head), std::move(tail));
 }
 
-auto _mergeSortStep(Ptr<ListNode> a, Ptr<ListNode> b) -> Ptr<ListNode> {
+namespace {
+
+auto _mergeSortedLists(Ptr<ListNode> a, Ptr<ListNode> b) -> Ptr<ListNode> {
     if (!a) return b;
     if (!b) return a;
 
@@ -176,25 +182,27 @@ auto _mergeSortStep(Ptr<ListNode> a, Ptr<ListNode> b) -> Ptr<ListNode> {
     auto mergedHead = std::move(a);
     a = std::move(mergedHead->next);
 
-    auto mergedTail = &mergedHead;
+    auto mergedTail = mergedHead.get();
     while (a && b) {
         if (a->value > b->value) {
             std::swap(a, b);
         }
 
-        (*mergedTail)->next = std::move(a);
-        mergedTail = &((*mergedTail)->next);
-        a = std::move((*mergedTail)->next);
+        mergedTail->next = std::move(a);
+        mergedTail = mergedTail->next.get();
+        a = std::move(mergedTail->next);
     }
 
     if (a) {
-        (*mergedTail)->next = std::move(a);
+        mergedTail->next = std::move(a);
     } else if (b) {
-        (*mergedTail)->next = std::move(b);
+        mergedTail->next = std::move(b);
     }
 
     return mergedHead;
 }
+
+}  // namespace
 
 auto mergeSort(Ptr<ListNode> list) -> Ptr<ListNode> {
     if (!list) return {};
@@ -203,7 +211,7 @@ auto mergeSort(Ptr<ListNode> list) -> Ptr<ListNode> {
     auto [head, tail] = splitListInTwoHalves(std::move(list));
     head = mergeSort(std::move(head));
     tail = mergeSort(std::move(tail));
-    return _mergeSortStep(std::move(head), std::move(tail));
+    return _mergeSortedLists(std::move(head), std::move(tail));
 }
 
 }  // namespace concatenated_list
