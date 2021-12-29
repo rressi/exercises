@@ -3,6 +3,7 @@ project(life++)
 
 set(CMAKE_CXX_STANDARD 17)
 
+enable_testing()
 add_subdirectory(binary_tree)
 add_subdirectory(concatenated_list)
 add_subdirectory(dynamic_programming)

@@ -1,7 +1,7 @@
 
 add_executable(
 
-        dynamic_programming
+        test_dynamic_programming
 
         all_subsets.h
         all_subsets.t.cpp
@@ -16,4 +16,7 @@ add_executable(
 
 )
 
-target_link_libraries(dynamic_programming gtest_main)
+target_link_libraries(test_dynamic_programming gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(test_dynamic_programming)
