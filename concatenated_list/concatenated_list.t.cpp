@@ -6,7 +6,6 @@
 
 #include "concatenated_list.h"
 
-
 namespace concatenated_list {
 namespace {
 
@@ -24,8 +23,7 @@ auto toString(const std::vector<std::string> &values) -> std::string {
 
 }  // namespace
 
-// --- ReverseConcatenatedList
-// --------------------------------------------------------------------
+// --- ReverseConcatenatedList ---
 
 struct ReverseConcatenatedList_TestCase {
     std::vector<std::string> values{};
@@ -36,9 +34,8 @@ class ReverseConcatenatedList
    public:
     using TestCase = ReverseConcatenatedList_TestCase;
 
-    static auto getTestName(
-        const ::testing::TestParamInfo<ReverseConcatenatedList_TestCase>
-            &testInfo) -> std::string;
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+        -> std::string;
 };
 
 INSTANTIATE_TEST_SUITE_P(ReverseConcatenatedList, ReverseConcatenatedList,
@@ -68,8 +65,7 @@ TEST_P(ReverseConcatenatedList, testReverseList) {
 }
 
 auto ReverseConcatenatedList::getTestName(
-    const ::testing::TestParamInfo<ReverseConcatenatedList_TestCase> &testInfo)
-    -> std::string {
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     auto name = std::string("case");
 
     for (auto &value : testInfo.param.values) {
@@ -86,8 +82,7 @@ auto operator<<(std::ostream &out,
     return out;
 }
 
-// --- FindNLastNode
-// ------------------------------------------------------------------------------
+// --- FindNLastNode ---
 
 class FindNLastNode : public ::testing::Test {};
 
@@ -109,8 +104,7 @@ TEST_F(FindNLastNode, findNLastNode_base) {
     EXPECT_FALSE(findNLastNode(*list, values.size()));
 }
 
-// --- TraverseList
-// -------------------------------------------------------------------------------
+// --- TraverseList ---
 
 struct TraverseList_TestCase {
     std::vector<std::string> values{};
@@ -120,8 +114,7 @@ class TraverseList : public ::testing::TestWithParam<TraverseList_TestCase> {
    public:
     using TestCase = TraverseList_TestCase;
 
-    static auto getTestName(
-        const ::testing::TestParamInfo<TraverseList_TestCase> &testInfo)
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
@@ -164,8 +157,7 @@ TEST_P(TraverseList, testTraverseListInReverseOrder) {
 }
 
 auto TraverseList::getTestName(
-    const ::testing::TestParamInfo<TraverseList_TestCase> &testInfo)
-    -> std::string {
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     auto name = std::string("case");
 
     for (auto &value : testInfo.param.values) {
@@ -181,8 +173,7 @@ auto operator<<(std::ostream &out, const TraverseList::TestCase &testCase)
     return out;
 }
 
-// --- RemoveDuplicates
-// -------------------------------------------------------------------------------
+// --- RemoveDuplicates ---
 
 struct RemoveDuplicates_TestCase {
     std::vector<std::string> values{};
@@ -194,8 +185,7 @@ class RemoveDuplicates
    public:
     using TestCase = RemoveDuplicates_TestCase;
 
-    static auto getTestName(
-        const ::testing::TestParamInfo<RemoveDuplicates_TestCase> &testInfo)
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
@@ -226,8 +216,7 @@ TEST_P(RemoveDuplicates, testRemoveDuplicates) {
 }
 
 auto RemoveDuplicates::getTestName(
-    const ::testing::TestParamInfo<RemoveDuplicates_TestCase> &testInfo)
-    -> std::string {
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     auto name = std::string("case");
 
     for (auto &value : testInfo.param.values) {
@@ -240,7 +229,142 @@ auto RemoveDuplicates::getTestName(
 auto operator<<(std::ostream &out, const RemoveDuplicates::TestCase &testCase)
     -> std::ostream & {
     out << "{ \"values\": \"" << toString(testCase.values)
-        << "\", \"expectedResults\": \"" << toString(testCase.expectedResult)
+        << "\", \"expectedResult\": \"" << toString(testCase.expectedResult)
+        << "\"}";
+    return out;
+}
+
+// --- SplitListInTwoHalves ---
+
+struct SplitListInTwoHalves_TestCase {
+    std::vector<std::string> values{};
+    std::vector<std::string> expectedHead{};
+    std::vector<std::string> expectedTail{};
+};
+
+class SplitListInTwoHalves
+    : public ::testing::TestWithParam<SplitListInTwoHalves_TestCase> {
+   public:
+    using TestCase = SplitListInTwoHalves_TestCase;
+
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+        -> std::string;
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    SplitListInTwoHalves, SplitListInTwoHalves,
+    testing::Values(
+
+        SplitListInTwoHalves::TestCase{
+            {"a", "b", "c", "d"}, {"a", "b"}, {"c", "d"}},
+        SplitListInTwoHalves::TestCase{{"a", "b", "c"}, {"a", "b"}, {"c"}},
+        SplitListInTwoHalves::TestCase{{"a", "b"}, {"a"}, {"b"}},
+        SplitListInTwoHalves::TestCase{{"a"}, {"a"}, {}},
+        SplitListInTwoHalves::TestCase{{}, {}, {}}
+
+        ),
+    &SplitListInTwoHalves::getTestName);
+
+TEST_P(SplitListInTwoHalves, testSplitListInTwoHalves) {
+    const auto &testCase = SplitListInTwoHalves::GetParam();
+
+    auto list = createList(testCase.values);
+    auto [actualHead, actualTail] = splitListInTwoHalves(std::move(list));
+
+    if (testCase.expectedHead.empty()) {
+        EXPECT_FALSE(actualHead);
+    } else {
+        EXPECT_EQ(testCase.expectedHead, actualHead
+                                             ? traverseList(*actualHead)
+                                             : std::vector<std::string>{});
+    }
+
+    if (testCase.expectedTail.empty()) {
+        EXPECT_FALSE(actualTail);
+    } else {
+        EXPECT_EQ(testCase.expectedTail, actualTail
+                                             ? traverseList(*actualTail)
+                                             : std::vector<std::string>{});
+    }
+}
+
+auto SplitListInTwoHalves::getTestName(
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
+    auto name = std::string("case");
+
+    for (auto &value : testInfo.param.values) {
+        name.append("_").append(value);
+    }
+
+    return name;
+}
+
+auto operator<<(std::ostream &out,
+                const SplitListInTwoHalves::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"values\": \"" << toString(testCase.values)
+        << "\", \"expectedHead\": \"" << toString(testCase.expectedHead)
+        << "\", \"expectedTail\": \"" << toString(testCase.expectedTail)
+        << "\"}";
+    return out;
+}
+
+// --- MergeSort ---
+
+struct MergeSort_TestCase {
+    std::vector<std::string> values{};
+    std::vector<std::string> expectedResult{};
+};
+
+class MergeSort : public ::testing::TestWithParam<MergeSort_TestCase> {
+   public:
+    using TestCase = MergeSort_TestCase;
+
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+        -> std::string;
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    MergeSort, MergeSort,
+    testing::Values(
+
+        MergeSort::TestCase{{"a", "b", "c", "d"}, {"a", "b", "c", "d"}},
+        MergeSort::TestCase{{"b", "a", "d", "c"}, {"a", "b", "c", "d"}},
+        MergeSort::TestCase{{"d", "c", "b", "a"}, {"a", "b", "c", "d"}},
+        MergeSort::TestCase{{"a", "b", "c"}, {"a", "b", "c"}},
+        MergeSort::TestCase{{"a", "c", "b"}, {"a", "b", "c"}},
+        MergeSort::TestCase{{"c", "b", "a"}, {"a", "b", "c"}},
+        MergeSort::TestCase{{"a", "b"}, {"a", "b"}},
+        MergeSort::TestCase{{"b", "a"}, {"a", "b"}},
+        MergeSort::TestCase{{"a"}, {"a"}}, MergeSort::TestCase{{}, {}}
+
+        ),
+    &MergeSort::getTestName);
+
+TEST_P(MergeSort, testMergeSort) {
+    const auto &testCase = MergeSort::GetParam();
+
+    auto sortedList = mergeSort(createList(testCase.values));
+    auto actualResult = sortedList ? traverseList(*sortedList)  //
+                                   : std::vector<std::string>{};
+    EXPECT_EQ(testCase.expectedResult, actualResult);
+}
+
+auto MergeSort::getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+    -> std::string {
+    auto name = std::string("case");
+
+    for (auto &value : testInfo.param.values) {
+        name.append("_").append(value);
+    }
+
+    return name;
+}
+
+auto operator<<(std::ostream &out, const MergeSort::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"values\": \"" << toString(testCase.values)
+        << "\", \"expectedResult\": \"" << toString(testCase.expectedResult)
         << "\"}";
     return out;
 }

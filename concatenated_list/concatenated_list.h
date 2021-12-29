@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace concatenated_list {
@@ -32,5 +33,9 @@ void traverseListInReverseOrder(const ListNode& head,
 
 void removeNextNode(ListNode* node);
 void removeDuplicates(ListNode* head);
+
+auto splitListInTwoHalves(Ptr<ListNode> head)
+    -> std::tuple<Ptr<ListNode>, Ptr<ListNode>>;
+auto mergeSort(Ptr<ListNode> a) -> Ptr<ListNode>;
 
 }  // namespace concatenated_list
