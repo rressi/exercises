@@ -197,6 +197,7 @@ INSTANTIATE_TEST_SUITE_P(
         RemoveDuplicates::TestCase{{"a", "a", "b"}, {"a", "b"}},
         RemoveDuplicates::TestCase{{"a", "b", "b"}, {"a", "b"}},
         RemoveDuplicates::TestCase{{"a", "b", "a"}, {"a", "b"}},
+        RemoveDuplicates::TestCase{{"b", "a", "b"}, {"b", "a"}},
         RemoveDuplicates::TestCase{{"a", "b", "a", "a"}, {"a", "b"}},
         RemoveDuplicates::TestCase{{"a"}, {"a"}},
         RemoveDuplicates::TestCase{{}, {}}
@@ -212,6 +213,20 @@ TEST_P(RemoveDuplicates, testRemoveDuplicates) {
 
     auto actualResult = list ? traverseList(*list) : std::vector<std::string>();
     auto expectedResult = RemoveDuplicates::GetParam().expectedResult;
+    EXPECT_EQ(expectedResult, actualResult);
+}
+
+TEST_P(RemoveDuplicates, testRemoveDuplicatesNoExtraMemory) {
+    auto values = RemoveDuplicates::GetParam().values;
+    auto list = createList(values);
+
+    list = removeDuplicatesNoExtraMemory(std::move(list));
+
+    auto actualResult = list ? traverseList(*list) : std::vector<std::string>();
+
+    auto expectedResult = RemoveDuplicates::GetParam().expectedResult;
+    std::sort(expectedResult.begin(), expectedResult.end());
+
     EXPECT_EQ(expectedResult, actualResult);
 }
 
