@@ -4,6 +4,7 @@
 #include <deque>
 #include <set>
 
+
 namespace graph {
 
 using ColorQueue = std::deque<Color>;
@@ -36,10 +37,10 @@ bool has_path(const Graph &graph, const ColorList &colorList) {
         if (node.color != firstColor) continue;
         if (node.edges.empty()) continue;
 
-        runners.push_back(Runner{
-            .colorQueue = ColorQueue{colorList.begin() + 1, colorList.end()},
-            .edgeQueue = EdgeQueue{node.edges.begin(), node.edges.end()},
-            .visitedSet = VisitedSet{edge}});
+        runners.emplace_back(
+            Runner{ColorQueue{colorList.begin() + 1, colorList.end()},  //
+                   EdgeQueue{node.edges.begin(), node.edges.end()},     //
+                   VisitedSet{edge}});
     }
 
     while (!runners.empty()) {

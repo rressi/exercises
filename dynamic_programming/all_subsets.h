@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <set>
+#include <stdexcept>
 #include <vector>
 
 namespace dynamic_programming {

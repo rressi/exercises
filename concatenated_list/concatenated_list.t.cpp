@@ -2,11 +2,27 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <ostream>
 
 #include "concatenated_list.h"
 
 
 namespace concatenated_list {
+namespace {
+
+auto toString(const std::vector<std::string> &values) -> std::string {
+    std::stringstream buf;
+    buf << "[";
+    auto sep = "";
+    for (const auto &value : values) {
+        buf << sep << value;
+        sep = ", ";
+    }
+    buf << "]";
+    return buf.str();
+}
+
+}  // namespace
 
 // --- ReverseConcatenatedList
 // --------------------------------------------------------------------
@@ -42,11 +58,13 @@ TEST_P(ReverseConcatenatedList, testReverseList) {
     auto values = ReverseConcatenatedList::GetParam().values;
 
     auto actualList = reverseList(createList(values));
+    auto actualValues = actualList ? traverseList(*actualList)  //
+                                   : std::vector<std::string>();
 
-    std::reverse(values.begin(), values.end());
-    auto expectedList = createList(values);
+    auto expectedValues = values;
+    std::reverse(expectedValues.begin(), expectedValues.end());
 
-    EXPECT_EQ(0, compareLists(*expectedList, *actualList));
+    EXPECT_EQ(expectedValues, actualValues);
 }
 
 auto ReverseConcatenatedList::getTestName(
@@ -59,6 +77,13 @@ auto ReverseConcatenatedList::getTestName(
     }
 
     return name;
+}
+
+auto operator<<(std::ostream &out,
+                const ReverseConcatenatedList::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"values\": \"" << toString(testCase.values) << "\"}";
+    return out;
 }
 
 // --- FindNLastNode
@@ -150,6 +175,12 @@ auto TraverseList::getTestName(
     return name;
 }
 
+auto operator<<(std::ostream &out, const TraverseList::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"values\": \"" << toString(testCase.values) << "\"}";
+    return out;
+}
+
 // --- RemoveDuplicates
 // -------------------------------------------------------------------------------
 
@@ -204,6 +235,14 @@ auto RemoveDuplicates::getTestName(
     }
 
     return name;
+}
+
+auto operator<<(std::ostream &out, const RemoveDuplicates::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"values\": \"" << toString(testCase.values)
+        << "\", \"expectedResults\": \"" << toString(testCase.expectedResult)
+        << "\"}";
+    return out;
 }
 
 }  // namespace concatenated_list
