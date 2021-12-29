@@ -10,6 +10,9 @@ add_executable(
 
 target_link_libraries(test_sieve_of_eratosthenes gtest_main)
 
+include(GoogleTest)
+gtest_discover_tests(test_sieve_of_eratosthenes)
+
 add_executable(
         bench_sieve_of_eratosthenes
         sieve_of_eratosthenes.cpp

@@ -8,3 +8,6 @@ add_executable(
         )
 
 target_link_libraries(test_find_n_best gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(test_find_n_best)

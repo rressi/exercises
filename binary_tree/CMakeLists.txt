@@ -9,3 +9,6 @@ add_executable(
         )
 
 target_link_libraries(test_binary_tree gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(test_binary_tree)

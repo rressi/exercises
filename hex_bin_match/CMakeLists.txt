@@ -9,3 +9,7 @@ add_executable(
         )
 
 target_link_libraries(test_hex_bin_match gtest_main)
+
+
+include(GoogleTest)
+gtest_discover_tests(test_hex_bin_match)
