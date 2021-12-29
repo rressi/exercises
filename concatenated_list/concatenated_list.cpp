@@ -3,7 +3,6 @@
 #include <cassert>
 #include <set>
 
-
 namespace concatenated_list {
 
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
@@ -130,6 +129,18 @@ void removeDuplicates(ListNode* head) {
         }
         node = node->next.get();
     }
+}
+
+auto removeDuplicatesNoExtraMemory(Ptr<ListNode> list) -> Ptr<ListNode> {
+    list = mergeSort(std::move(list));
+    auto node = list.get();
+    while (node) {
+        while (node->next && node->value == node->next->value) {
+            removeNextNode(node);
+        }
+        node = node->next.get();
+    }
+    return list;
 }
 
 auto splitListInTwoHalves(Ptr<ListNode> head)

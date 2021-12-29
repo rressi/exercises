@@ -33,6 +33,7 @@ void traverseListInReverseOrder(const ListNode& head,
 
 void removeNextNode(ListNode* node);
 void removeDuplicates(ListNode* head);
+auto removeDuplicatesNoExtraMemory(Ptr<ListNode> list) -> Ptr<ListNode>;
 
 auto splitListInTwoHalves(Ptr<ListNode> head)
     -> std::tuple<Ptr<ListNode>, Ptr<ListNode>>;
