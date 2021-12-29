@@ -1,6 +1,8 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
+
 #include "three_steps.h"
 
 namespace dynamic_programming {
@@ -54,6 +56,13 @@ auto UnitThreeSteps::getTestName(
     } else {
         return "n_" + std::to_string(param.input);
     }
+}
+
+auto operator<<(std::ostream &out, const UnitThreeSteps::TestCase &testCase)
+    -> std::ostream & {
+    out << "{\"input\": \"" << testCase.input << "\", \"expectedOutcome\": \""
+        << testCase.expectedOutcome << "\"}";
+    return out;
 }
 
 }  // namespace dynamic_programming
