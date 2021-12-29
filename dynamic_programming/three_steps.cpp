@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <unordered_map>
 
 namespace dynamic_programming {
 
@@ -48,6 +49,10 @@ std::int64_t count_combinations_recursion(
 
 auto count_combinations_in_climbing_stairs_recursive(std::int64_t n)
     -> std::int64_t {
+    if (n < 0) {
+        return 0;
+    }
+
     std::unordered_map<std::int64_t, std::int64_t> memo;
     memo.reserve(n);
     return count_combinations_recursion(n, &memo);

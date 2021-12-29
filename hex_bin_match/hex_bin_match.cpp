@@ -1,6 +1,8 @@
 #include "hex_bin_match.h"
 
 #include <algorithm>
+#include <stdexcept>
+
 
 namespace hex_bin_match {
 
