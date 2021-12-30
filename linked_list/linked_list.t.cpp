@@ -4,10 +4,10 @@
 #include <algorithm>
 #include <ostream>
 
-#include "concatenated_list.h"
+#include "linked_list.h"
 
 
-namespace concatenated_list {
+namespace linked_list {
 namespace {
 
 auto toString(const std::vector<std::string> &values) -> std::string {
@@ -385,4 +385,4 @@ auto operator<<(std::ostream &out, const MergeSort::TestCase &testCase)
     return out;
 }
 
-}  // namespace concatenated_list
+}  // namespace linked_list
