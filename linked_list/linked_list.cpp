@@ -1,9 +1,9 @@
-#include "concatenated_list.h"
+#include "linked_list.h"
 
 #include <cassert>
 #include <set>
 
-namespace concatenated_list {
+namespace linked_list {
 
 auto createNode(std::string value, Ptr<ListNode> tail = {}) -> Ptr<ListNode> {
     auto newNode = std::make_unique<ListNode>();
@@ -214,4 +214,4 @@ auto mergeSort(Ptr<ListNode> list) -> Ptr<ListNode> {
     return _mergeSortedLists(std::move(head), std::move(tail));
 }
 
-}  // namespace concatenated_list
+}  // namespace linked_list

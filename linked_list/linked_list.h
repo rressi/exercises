@@ -6,7 +6,7 @@
 #include <tuple>
 #include <vector>
 
-namespace concatenated_list {
+namespace linked_list {
 
 template <class T>
 using Ptr = std::unique_ptr<T>;
@@ -38,4 +38,4 @@ auto splitListInTwoHalves(Ptr<ListNode> head)
     -> std::tuple<Ptr<ListNode>, Ptr<ListNode>>;
 auto mergeSort(Ptr<ListNode> a) -> Ptr<ListNode>;
 
-}  // namespace concatenated_list
+}  // namespace linked_list
