@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <ostream>
 
-#include "linked_list.h"
-
+#include "node.h"
 
 namespace linked_list {
 namespace {
@@ -46,18 +45,16 @@ INSTANTIATE_TEST_SUITE_P(ReverseConcatenatedList, ReverseConcatenatedList,
                                  {"a", "b", "c", "d"}},
                              ReverseConcatenatedList::TestCase{{"a", "b", "c"}},
                              ReverseConcatenatedList::TestCase{{"a", "b"}},
-                             ReverseConcatenatedList::TestCase{{"a"}},
-                             ReverseConcatenatedList::TestCase{}
+                             ReverseConcatenatedList::TestCase{{"a"}}
 
                              ),
                          &ReverseConcatenatedList::getTestName);
 
 TEST_P(ReverseConcatenatedList, testReverseList) {
-    auto values = ReverseConcatenatedList::GetParam().values;
+    const auto &values = ReverseConcatenatedList::GetParam().values;
 
-    auto actualList = reverseList(createList(values));
-    auto actualValues = actualList ? traverseList(*actualList)  //
-                                   : std::vector<std::string>();
+    auto actualList = reverseList(createList(values).value());
+    auto actualValues = traverseList(actualList);
 
     auto expectedValues = values;
     std::reverse(expectedValues.begin(), expectedValues.end());
@@ -88,7 +85,7 @@ auto operator<<(std::ostream &out,
 class FindNLastNode : public ::testing::Test {};
 
 TEST_F(FindNLastNode, findNLastNode_base) {
-    auto values = std::vector<std::string>{"a", "b", "c", "d", "e", "f"};
+    const auto &values = std::vector<std::string>{"a", "b", "c", "d", "e", "f"};
     auto list = createList(values);
 
     for (auto n = 0; n < values.size(); n++) {
@@ -98,7 +95,7 @@ TEST_F(FindNLastNode, findNLastNode_base) {
         auto nLast = findNLastNode(*list, n);
         EXPECT_TRUE(nLast);
         if (nLast) {
-            EXPECT_EQ(expectedValue, nLast->value);
+            EXPECT_EQ(expectedValue, nLast->value());
         }
     }
 
@@ -131,11 +128,11 @@ INSTANTIATE_TEST_SUITE_P(TraverseList, TraverseList,
                          &TraverseList::getTestName);
 
 TEST_P(TraverseList, testTraverse) {
-    auto values = TraverseList::GetParam().values;
-    auto list = createList(values);
+    const auto &values = TraverseList::GetParam().values;
+    auto list = createList(values).value();
 
     auto index = 0;
-    traverseList(*list, [&values, &index](const std::string &value) {
+    traverseList(list, [&values, &index](const std::string &value) {
         ASSERT_LT(index, values.size());
         EXPECT_EQ(values.at(index), value);
         index++;
@@ -144,12 +141,12 @@ TEST_P(TraverseList, testTraverse) {
 }
 
 TEST_P(TraverseList, testTraverseListInReverseOrder) {
-    auto values = TraverseList::GetParam().values;
-    auto list = createList(values);
+    const auto &values = TraverseList::GetParam().values;
+    auto list = createList(values).value();
 
     auto index = 0;
     traverseListInReverseOrder(
-        *list, [&values, &index](const std::string &value) {
+        list, [&values, &index](const std::string &value) {
             ASSERT_LT(index, values.size());
             EXPECT_EQ(values.at(values.size() - 1 - index), value);
             index++;
@@ -200,30 +197,30 @@ INSTANTIATE_TEST_SUITE_P(
         RemoveDuplicates::TestCase{{"a", "b", "a"}, {"a", "b"}},
         RemoveDuplicates::TestCase{{"b", "a", "b"}, {"b", "a"}},
         RemoveDuplicates::TestCase{{"a", "b", "a", "a"}, {"a", "b"}},
-        RemoveDuplicates::TestCase{{"a"}, {"a"}},
-        RemoveDuplicates::TestCase{{}, {}}
+        RemoveDuplicates::TestCase{{"a"}, {"a"}}
 
         ),
     &RemoveDuplicates::getTestName);
 
 TEST_P(RemoveDuplicates, testRemoveDuplicates) {
-    auto values = RemoveDuplicates::GetParam().values;
-    auto list = createList(values);
+    const auto &values = RemoveDuplicates::GetParam().values;
 
-    removeDuplicates(list.get());
+    auto list = createList(values).value();
+    removeDuplicates(&list);
 
-    auto actualResult = list ? traverseList(*list) : std::vector<std::string>();
-    auto expectedResult = RemoveDuplicates::GetParam().expectedResult;
+    auto actualResult = traverseList(list);
+    const auto &expectedResult = RemoveDuplicates::GetParam().expectedResult;
     EXPECT_EQ(expectedResult, actualResult);
 }
 
-TEST_P(RemoveDuplicates, testRemoveDuplicatesNoExtraMemory) {
+TEST_P(RemoveDuplicates, testRemoveDuplicatesSortedList) {
     auto values = RemoveDuplicates::GetParam().values;
-    auto list = createList(values);
+    std::sort(values.begin(), values.end());
 
-    list = removeDuplicatesNoExtraMemory(std::move(list));
+    auto list = createList(values).value();
+    removeDuplicatesSortedList(&list);
 
-    auto actualResult = list ? traverseList(*list) : std::vector<std::string>();
+    auto actualResult = traverseList(list);
 
     auto expectedResult = RemoveDuplicates::GetParam().expectedResult;
     std::sort(expectedResult.begin(), expectedResult.end());
@@ -275,8 +272,7 @@ INSTANTIATE_TEST_SUITE_P(
             {"a", "b", "c", "d"}, {"a", "b"}, {"c", "d"}},
         SplitListInTwoHalves::TestCase{{"a", "b", "c"}, {"a", "b"}, {"c"}},
         SplitListInTwoHalves::TestCase{{"a", "b"}, {"a"}, {"b"}},
-        SplitListInTwoHalves::TestCase{{"a"}, {"a"}, {}},
-        SplitListInTwoHalves::TestCase{{}, {}, {}}
+        SplitListInTwoHalves::TestCase{{"a"}, {"a"}, {}}
 
         ),
     &SplitListInTwoHalves::getTestName);
@@ -284,23 +280,16 @@ INSTANTIATE_TEST_SUITE_P(
 TEST_P(SplitListInTwoHalves, testSplitListInTwoHalves) {
     const auto &testCase = SplitListInTwoHalves::GetParam();
 
-    auto list = createList(testCase.values);
+    auto list = createList(testCase.values).value();
     auto [actualHead, actualTail] = splitListInTwoHalves(std::move(list));
 
-    if (testCase.expectedHead.empty()) {
-        EXPECT_FALSE(actualHead);
-    } else {
-        EXPECT_EQ(testCase.expectedHead, actualHead
-                                             ? traverseList(*actualHead)
-                                             : std::vector<std::string>{});
-    }
+    EXPECT_EQ(testCase.expectedHead, traverseList(actualHead));
 
     if (testCase.expectedTail.empty()) {
         EXPECT_FALSE(actualTail);
     } else {
-        EXPECT_EQ(testCase.expectedTail, actualTail
-                                             ? traverseList(*actualTail)
-                                             : std::vector<std::string>{});
+        ASSERT_TRUE(actualTail);
+        EXPECT_EQ(testCase.expectedTail, traverseList(actualTail.value()));
     }
 }
 
@@ -322,6 +311,75 @@ auto operator<<(std::ostream &out,
         << "\", \"expectedHead\": \"" << toString(testCase.expectedHead)
         << "\", \"expectedTail\": \"" << toString(testCase.expectedTail)
         << "\"}";
+    return out;
+}
+
+// --- MergeSortedLists ---
+
+struct MergeSortedLists_TestCase {
+    std::vector<std::string> listA{};
+    std::vector<std::string> listB{};
+    std::vector<std::string> expectedMergedList{};
+};
+
+class MergeSortedLists
+    : public ::testing::TestWithParam<MergeSortedLists_TestCase> {
+   public:
+    using TestCase = MergeSortedLists_TestCase;
+
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+        -> std::string;
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    MergeSortedLists, MergeSortedLists,
+    testing::Values(
+
+        MergeSortedLists::TestCase{
+            {"a", "c"}, {"b", "d"}, {"a", "b", "c", "d"}},
+        MergeSortedLists::TestCase{
+            {"a", "c", "d"}, {"b"}, {"a", "b", "c", "d"}},
+        MergeSortedLists::TestCase{
+            {"b", "c", "d"}, {"a"}, {"a", "b", "c", "d"}},
+        MergeSortedLists::TestCase{
+            {"a", "b", "c"}, {"d"}, {"a", "b", "c", "d"}},
+        MergeSortedLists::TestCase{{"b"}, {"a"}, {"a", "b"}},
+        MergeSortedLists::TestCase{{"a"}, {"b"}, {"a", "b"}}
+
+        ),
+    &MergeSortedLists::getTestName);
+
+TEST_P(MergeSortedLists, testMergeSortedLists) {
+    const auto &testCase = MergeSortedLists::GetParam();
+
+    auto listA = createList(testCase.listA).value();
+    auto listB = createList(testCase.listB).value();
+    auto actualMergedList = mergeSortedLists(listA, listB);
+
+    EXPECT_EQ(testCase.expectedMergedList, traverseList(actualMergedList));
+}
+
+auto MergeSortedLists::getTestName(
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
+    auto name = std::string("case");
+
+    for (auto &value : testInfo.param.listA) {
+        name.append("_").append(value);
+    }
+    name.append("_with");
+    for (auto &value : testInfo.param.listB) {
+        name.append("_").append(value);
+    }
+
+    return name;
+}
+
+auto operator<<(std::ostream &out, const MergeSortedLists::TestCase &testCase)
+    -> std::ostream & {
+    out << "{ \"listA\": \"" << toString(testCase.listA);
+    out << "\", \"listB\": \"" << toString(testCase.listB);
+    out << "\", \"expectedMergedList\": \""
+        << toString(testCase.expectedMergedList) << "\"}";
     return out;
 }
 
@@ -352,7 +410,7 @@ INSTANTIATE_TEST_SUITE_P(
         MergeSort::TestCase{{"c", "b", "a"}, {"a", "b", "c"}},
         MergeSort::TestCase{{"a", "b"}, {"a", "b"}},
         MergeSort::TestCase{{"b", "a"}, {"a", "b"}},
-        MergeSort::TestCase{{"a"}, {"a"}}, MergeSort::TestCase{{}, {}}
+        MergeSort::TestCase{{"a"}, {"a"}}
 
         ),
     &MergeSort::getTestName);
@@ -360,9 +418,10 @@ INSTANTIATE_TEST_SUITE_P(
 TEST_P(MergeSort, testMergeSort) {
     const auto &testCase = MergeSort::GetParam();
 
-    auto sortedList = mergeSort(createList(testCase.values));
-    auto actualResult = sortedList ? traverseList(*sortedList)  //
-                                   : std::vector<std::string>{};
+    auto list = createList(testCase.values).value();
+    auto sortedList = mergeSort(list);
+
+    auto actualResult = traverseList(sortedList);
     EXPECT_EQ(testCase.expectedResult, actualResult);
 }
 

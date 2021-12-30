@@ -1,0 +1,7 @@
+syntax = "proto3";
+package linked_list;
+
+message Node {
+    string value = 1;
+    Node next = 2;
+}
