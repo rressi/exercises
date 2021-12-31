@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <utility>
 
+
 namespace linked_list {
 
 List::List(NodeIteratorConst itStart, NodeIteratorConst itEnd) {
@@ -73,6 +74,30 @@ auto List::extractValues() const -> std::vector<Value> {
     return values;
 }
 
+auto List::tail(std::size_t n) const -> const Node* {
+    if (n == 0) {
+        return tail_;
+    } else if (n >= size_) {
+        return nullptr;
+    }
+
+    auto frontRunner = begin();
+    while (n > 0 && frontRunner->has_next()) {
+        frontRunner++;
+        n--;
+    }
+    assert(n == 0);
+
+    auto backRunner = begin();
+    while (frontRunner->has_next()) {
+        frontRunner++;
+        backRunner++;
+    }
+    assert(backRunner->has_next());
+
+    return &(*backRunner);
+}
+
 void List::visitValues(const ValueCallback& valueCallback) const {
     for (const auto& node : *this) {
         valueCallback(node.value());
@@ -87,21 +112,22 @@ void List::visitValuesReverse(const ValueCallback& valueCallback) const {
     }
 }
 
-auto List::reverse() {
-    auto a = Ptr<Node>(head_.release());
-    head_.reset(tail_);
-    isSorted_ = true;
-    if (a) {
-        auto b = Ptr<Node>(a->release_next());
-        while (b) {
-            auto c = Ptr<Node>(b->release_next());
-            b->set_allocated_next(a.release());
-            isSorted_ = isSorted_ && bool(b->value() <= b->next().value());
-            a = std::move(b);
-            b = std::move(c);
-        }
-    }
+void List::reverse() {
+    if (size_ <= 1) return;
+
+    auto a = std::move(head_);
     tail_ = a.get();
+    isSorted_ = true;
+
+    auto b = Ptr<Node>(a->release_next());
+    while (b) {
+        auto c = Ptr<Node>(b->release_next());
+        b->set_allocated_next(a.release());
+        isSorted_ = isSorted_ && bool(b->value() <= b->next().value());
+        a = std::move(b);
+        b = std::move(c);
+    }
+    head_ = std::move(a);
 }
 
 void List::removeDuplicates() {
@@ -125,7 +151,7 @@ void List::removeDuplicates() {
             }
         }
     } else {
-        auto foundItems = std::set<Value>();
+        auto foundItems = std::set<Value>{fastIt->value()};
         while (fastIt->has_next()) {
             fastIt++;
             const auto& newValue = fastIt->value();
@@ -158,61 +184,65 @@ auto List::split() && -> std::tuple<List, List> {
         if (i & 1) slowRunner++;
         i++;
     }
-    assert(slowRunner->has_next());
 
-    return {List(std::move(head_), &*(slowRunner), size_ / 2, isSorted_),
-            List(Ptr<Node>(slowRunner->release_next()), &*(fastRunner),
-                 size_ - (size_ / 2), isSorted_)};
+    auto tailSize = size_ / 2;
+    auto headSize = size_ - tailSize;
+
+    auto left = List(std::move(head_), &*(slowRunner), headSize,
+                     isSorted_ || headSize == 1);
+    auto right = List(Ptr<Node>(slowRunner->release_next()), &*(fastRunner),
+                      tailSize, isSorted_ || tailSize == 1);
+
+    return std::tuple<List, List>(std::move(left), std::move(right));
 }
 
-auto List::mergeSorted(const List& other) {
-    if (!isSorted_) {
+auto List::mergeSortedLists(const List& a, const List& b) -> List {
+    if (!a.isSorted_) {
         throw std::runtime_error("This list is not sorted");
-    } else if (!other.isSorted_) {
+    } else if (!b.isSorted_) {
         throw std::runtime_error("The passed list is not sorted");
-    } else if (other.empty()) {
-        return;
-    } else if (empty()) {
-        operator=(other);
-        return;
+    } else if (a.empty()) {
+        return b;
+    } else if (b.empty()) {
+        return a;
     }
 
-    auto newHead = Ptr<Node>();
+    auto aIt = a.begin();
+    auto aEnd = a.end();
+    auto bIt = b.begin();
+    auto bEnd = b.end();
+    if (bIt->value() < aIt->value()) {
+        std::swap(aIt, bIt);
+        std::swap(aEnd, bEnd);
+    }
+
+    auto newHead = std::make_unique<Node>();
     auto newTail = newHead.get();
-    auto otherIt = other.begin();
+    newTail->set_value(aIt->value());
+    aIt++;
 
-    const auto& value = otherIt->value();
-    if (value >= head_->value()) {
-        newTail = newTail->mutable_next();
-        newTail->set_value(value);
-        otherIt++;
-    } else {
-        newHead = std::move(head_);
-        head_.reset(newHead->release_next());
-    }
-
-    while (head_) {
-        const auto& value = otherIt->value();
-        if (value >= head_->value()) {
-            newTail = newTail->mutable_next();
-            newTail->set_value(value);
-            otherIt++;
-        } else {
-            newTail->set_allocated_next(head_.release());
-            newTail = newTail->mutable_next();
-            head_.reset(newTail->release_next());
+    while (aIt != aEnd && bIt != bEnd) {
+        if (bIt->value() < aIt->value()) {
+            std::swap(aIt, bIt);
+            std::swap(aEnd, bEnd);
         }
-    }
-
-    while (otherIt != other.end()) {
         newTail = newTail->mutable_next();
-        newTail->set_value(value);
-        otherIt++;
+        newTail->set_value(aIt->value());
+        aIt++;
     }
 
-    head_ = std::move(newHead);
-    tail_ = newTail;
-    size_ += other.size_;
+    if (aIt == aEnd) {
+        std::swap(aIt, bIt);
+        std::swap(aEnd, bEnd);
+    }
+
+    while (aIt != aEnd) {
+        newTail = newTail->mutable_next();
+        newTail->set_value(aIt->value());
+        aIt++;
+    }
+
+    return List(std::move(newHead), newTail, a.size() + b.size(), true);
 }
 
 void List::sort() {
@@ -221,8 +251,9 @@ void List::sort() {
     }
 
     auto [left, right] = std::move(*this).split();
-    left.mergeSorted(right);
-    operator=(left);
+    left.sort();
+    right.sort();
+    operator=(List::mergeSortedLists(left, right));
 }
 
 }  // namespace linked_list

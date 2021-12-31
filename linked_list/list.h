@@ -10,6 +10,7 @@
 #include "node.h"
 #include "node_iterator.h"
 
+
 namespace linked_list {
 
 template <class T>
@@ -34,17 +35,17 @@ class List final {
     auto head() const -> const Node* { return head_.get(); }
     bool isSorted() const { return isSorted_; }
     auto size() const { return size_; }
-    auto tail(std::size_t n = 0) const -> const Node* { return tail_; }
+    auto tail(std::size_t n = 0) const -> const Node*;
 
     void visitValues(const ValueCallback& valueCallback) const;
     void visitValuesReverse(const ValueCallback& valueCallback) const;
 
     void append(Value newValue);
-    auto reverse();
+    void reverse();
     void removeDuplicates();
     void sort();
     auto split() && -> std::tuple<List, List>;
-    auto mergeSorted(const List&);
+    static auto mergeSortedLists(const List& a, const List& b) -> List;
 
     auto begin() const -> NodeIteratorConst {
         return NodeIteratorConst(head_.get());
@@ -59,8 +60,6 @@ class List final {
         return NodeIteratorMutable(head_.get());
     }
     auto end() -> NodeIteratorMutable { return NodeIteratorMutable(); }
-
-    auto splitListInTwoHalves(Node list) -> std::tuple<Node, Opt<Node>>;
 
    private:
     Ptr<Node> head_{};
