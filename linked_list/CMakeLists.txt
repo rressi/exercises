@@ -6,7 +6,7 @@ add_executable(
         node.cpp
         node.h
         node.t.cpp
-
+        node_iterator.h
         list.cpp
         list.h
 )

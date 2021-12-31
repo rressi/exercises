@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <utility>
 
-
 namespace linked_list {
 
 List::List(NodeIteratorConst itStart, NodeIteratorConst itEnd) {
@@ -24,6 +23,9 @@ List::List(std::vector<Value> values) {
 List::List(const List& other) : size_(other.size_), isSorted_(other.isSorted_) {
     operator=(other);
 }
+
+List::List(Ptr<Node> head, Node* tail, std::size_t size, bool isSorted)
+    : head_(std::move(head)), tail_(tail), size_(size), isSorted_(isSorted) {}
 
 auto List::operator=(const List& other) -> List& {
     if (other.head_) {
