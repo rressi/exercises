@@ -1,4 +1,3 @@
-
 include(AddProtos)
 
 add_executable(
@@ -7,6 +6,9 @@ add_executable(
         node.cpp
         node.h
         node.t.cpp
+
+        list.cpp
+        list.h
 )
 
 add_protos(TARGET test_linked_list

@@ -4,6 +4,8 @@
 #include <cassert>
 #include <set>
 
+#include "node_iterator.h"
+
 
 namespace linked_list {
 
