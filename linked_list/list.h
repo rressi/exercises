@@ -31,6 +31,7 @@ class List final {
 
     auto compare(const List& other) const -> int;
     bool empty() const { return !head_; };
+    auto front() const -> const Value&;
     auto extractValues() const -> std::vector<Value>;
     auto head() const -> const Node* { return head_.get(); }
     bool isSorted() const { return isSorted_; }
@@ -40,12 +41,11 @@ class List final {
     void visitValues(const ValueCallback& valueCallback) const;
     void visitValuesReverse(const ValueCallback& valueCallback) const;
 
-    void append(Value newValue);
     void reverse();
     void removeDuplicates();
     void sort();
     auto split() && -> std::tuple<List, List>;
-    static auto mergeSortedLists(const List& a, const List& b) -> List;
+    static auto mergeSortedLists(List a, List b) -> List;
 
     auto begin() const -> NodeIteratorConst {
         return NodeIteratorConst(head_.get());
@@ -61,6 +61,14 @@ class List final {
     }
     auto end() -> NodeIteratorMutable { return NodeIteratorMutable(); }
 
+    auto pop_front() -> Value;
+    void push_front(Value newValue);
+    void push_back(Value newValue);
+
+    auto popFront() -> Ptr<Node>;
+    void pushFront(Ptr<Node> newNode);
+    void pushBack(Ptr<Node> newNode);
+
    private:
     Ptr<Node> head_{};
     Node* tail_{};
@@ -68,6 +76,8 @@ class List final {
     bool isSorted_{true};
 
     List(Ptr<Node> head, Node* tail, std::size_t size, bool isSorted);
+
+    void copyAssign(const List& other);
 };
 
 inline bool operator<(const List& a, const List& b) { return a.compare(b) < 0; }
