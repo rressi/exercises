@@ -4,66 +4,42 @@
 #include <stdexcept>
 #include <utility>
 
-
 namespace linked_list {
 
 List::List(NodeIteratorConst itStart, NodeIteratorConst itEnd) {
-    auto it = itStart;
-    while (it != itEnd) {
-        append(it->value());
-        it++;
+    for (auto it = itStart; it != itEnd; it++) {
+        push_back(it->value());
     }
 }
 
 List::List(std::vector<Value> values) {
     for (auto&& value : values) {
-        append(std::move(value));
+        push_back(std::move(value));
     }
 }
 
 List::List(const List& other) : size_(other.size_), isSorted_(other.isSorted_) {
-    operator=(other);
+    copyAssign(other);
 }
 
 List::List(Ptr<Node> head, Node* tail, std::size_t size, bool isSorted)
     : head_(std::move(head)), tail_(tail), size_(size), isSorted_(isSorted) {}
 
 auto List::operator=(const List& other) -> List& {
-    if (other.head_) {
-        head_ = std::make_unique<Node>(*(other.head_));
-    } else {
-        head_.reset();
-    }
-
-    size_ = other.size_;
-    isSorted_ = other.isSorted_;
-    tail_ = head_.get();
-
+    copyAssign(other);
     return *this;
-}
-
-void List::append(Value newValue) {
-    if (!head_) {
-        assert(tail_ == nullptr);
-        assert(size_ == 0);
-
-        head_ = std::make_unique<Node>();
-        tail_ = head_.get();
-    } else {
-        assert(tail_ != nullptr);
-        assert(size_ > 0);
-
-        isSorted_ = isSorted_ && bool(newValue >= tail_->value());
-        tail_ = tail_->mutable_next();
-    }
-
-    tail_->set_value(std::move(newValue));
-    size_++;
 }
 
 auto List::compare(const List& other) const -> int {
     return std::lexicographical_compare(begin(), end(),  //
                                         other.begin(), other.end());
+}
+
+auto List::front() const -> const Value& {
+    if (empty()) {
+        throw std::runtime_error("Cannot return front value of an empty list");
+    }
+    return head_->value();
 }
 
 auto List::extractValues() const -> std::vector<Value> {
@@ -115,19 +91,12 @@ void List::visitValuesReverse(const ValueCallback& valueCallback) const {
 void List::reverse() {
     if (size_ <= 1) return;
 
-    auto a = std::move(head_);
-    tail_ = a.get();
-    isSorted_ = true;
-
-    auto b = Ptr<Node>(a->release_next());
-    while (b) {
-        auto c = Ptr<Node>(b->release_next());
-        b->set_allocated_next(a.release());
-        isSorted_ = isSorted_ && bool(b->value() <= b->next().value());
-        a = std::move(b);
-        b = std::move(c);
+    auto reversedList = List();
+    while (!empty()) {
+        reversedList.pushFront(popFront());
     }
-    head_ = std::move(a);
+
+    operator=(std::move(reversedList));
 }
 
 void List::removeDuplicates() {
@@ -170,6 +139,23 @@ void List::removeDuplicates() {
     }
 }
 
+void List::sort() {
+    if (isSorted_) {
+        return;
+    }
+
+    assert(size_ > 1);
+    auto [left, right] = std::move(*this).split();
+
+    left.sort();
+    right.sort();
+
+    auto mergedList = List::mergeSortedLists(std::move(left), std::move(right));
+    assert(mergedList.isSorted());
+
+    operator=(std::move(mergedList));
+}
+
 auto List::split() && -> std::tuple<List, List> {
     if (size_ <= 1) {
         return {std::move(*this), {}};
@@ -196,7 +182,7 @@ auto List::split() && -> std::tuple<List, List> {
     return std::tuple<List, List>(std::move(left), std::move(right));
 }
 
-auto List::mergeSortedLists(const List& a, const List& b) -> List {
+auto List::mergeSortedLists(List a, List b) -> List {
     if (!a.isSorted_) {
         throw std::runtime_error("This list is not sorted");
     } else if (!b.isSorted_) {
@@ -207,53 +193,125 @@ auto List::mergeSortedLists(const List& a, const List& b) -> List {
         return a;
     }
 
-    auto aIt = a.begin();
-    auto aEnd = a.end();
-    auto bIt = b.begin();
-    auto bEnd = b.end();
-    if (bIt->value() < aIt->value()) {
-        std::swap(aIt, bIt);
-        std::swap(aEnd, bEnd);
-    }
-
-    auto newHead = std::make_unique<Node>();
-    auto newTail = newHead.get();
-    newTail->set_value(aIt->value());
-    aIt++;
-
-    while (aIt != aEnd && bIt != bEnd) {
-        if (bIt->value() < aIt->value()) {
-            std::swap(aIt, bIt);
-            std::swap(aEnd, bEnd);
+    auto newList = List();
+    while (!a.empty() && !b.empty()) {
+        if (b.front() < a.front()) {
+            newList.pushBack(b.popFront());
+        } else {
+            newList.pushBack(a.popFront());
         }
-        newTail = newTail->mutable_next();
-        newTail->set_value(aIt->value());
-        aIt++;
+    }
+    while (!a.empty()) {
+        newList.pushBack(a.popFront());
+    }
+    while (!b.empty()) {
+        newList.pushBack(b.popFront());
     }
 
-    if (aIt == aEnd) {
-        std::swap(aIt, bIt);
-        std::swap(aEnd, bEnd);
-    }
-
-    while (aIt != aEnd) {
-        newTail = newTail->mutable_next();
-        newTail->set_value(aIt->value());
-        aIt++;
-    }
-
-    return List(std::move(newHead), newTail, a.size() + b.size(), true);
+    return newList;
 }
 
-void List::sort() {
-    if (size_ <= 1) {
-        return;
+auto List::pop_front() -> Value {
+    if (empty()) {
+        throw std::runtime_error("Cannot pop front value of an empty list");
+    }
+    return popFront()->value();
+}
+
+void List::push_front(Value newValue) {
+    auto newNode = std::make_unique<Node>();
+    newNode->set_value(std::move(newValue));
+    pushFront(std::move(newNode));
+}
+
+void List::push_back(Value newValue) {
+    auto newNode = std::make_unique<Node>();
+    newNode->set_value(std::move(newValue));
+    pushBack(std::move(newNode));
+}
+
+auto List::popFront() -> Ptr<Node> {
+    if (!head_) return {};
+
+    auto nextNode = std::move(head_);
+    if (nextNode->has_next()) {
+        head_.reset(nextNode->release_next());
+    } else {
+        tail_ = nullptr;
     }
 
-    auto [left, right] = std::move(*this).split();
-    left.sort();
-    right.sort();
-    operator=(List::mergeSortedLists(left, right));
+    size_--;
+    isSorted_ = isSorted_ || size_ <= 1;
+    return nextNode;
+}
+
+void List::pushFront(Ptr<Node> newNode) {
+    if (!newNode) return;
+
+    auto newNodeTail = newNode.get();
+    auto newNodeSize = std::size_t(1);
+    auto newNodeIsSorted = true;
+
+    while (newNodeTail->has_next()) {
+        newNodeSize++;
+        newNodeIsSorted = newNodeIsSorted && bool(newNodeTail->value() <=
+                                                  newNodeTail->next().value());
+        newNodeTail = newNodeTail->mutable_next();
+    }
+
+    if (head_) {
+        newNodeTail->set_allocated_next(head_.release());
+        newNodeIsSorted =
+            newNodeIsSorted && isSorted_ &&
+            bool(newNodeTail->value() <= newNodeTail->next().value());
+    } else {
+        tail_ = newNodeTail;
+    }
+
+    head_ = std::move(newNode);
+    size_ += newNodeSize;
+    isSorted_ = newNodeIsSorted;
+}
+
+void List::pushBack(Ptr<Node> newNode) {
+    if (!newNode) return;
+
+    auto newNodeTail = newNode.get();
+    auto newNodeSize = std::size_t(1);
+    auto newNodeIsSorted = true;
+
+    while (newNodeTail->has_next()) {
+        newNodeSize++;
+        newNodeIsSorted = newNodeIsSorted && bool(newNodeTail->value() <=
+                                                  newNodeTail->next().value());
+        newNodeTail = newNodeTail->mutable_next();
+    }
+
+    if (tail_) {
+        tail_->set_allocated_next(newNode.release());
+        newNodeIsSorted = newNodeIsSorted && isSorted_ &&
+                          bool(tail_->value() <= tail_->next().value());
+    } else {
+        head_ = std::move(newNode);
+    }
+
+    tail_ = newNodeTail;
+    size_ += newNodeSize;
+    isSorted_ = newNodeIsSorted;
+}
+
+void List::copyAssign(const List& other) {
+    if (this == &other) return;
+
+    if (other.head_) {
+        head_ = std::make_unique<Node>(*(other.head_));
+    } else {
+        head_.reset();
+    }
+
+    tail_ = head_.get();
+    size_ = other.size_;
+    isSorted_ = other.isSorted_;
 }
 
 }  // namespace linked_list
