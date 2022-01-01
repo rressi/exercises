@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 
-
 namespace graph {
 
 auto toString(Color color) -> std::string {
