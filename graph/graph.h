@@ -1,23 +1,40 @@
 #pragma once
 
 #include <deque>
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 namespace graph {
 
-using Edge = int;
-using Edges = std::vector<Edge>;
+class Graph {
+   public:
+    enum class Color { Black, Blue, Green, Orange, Red, Yellow, White };
+    using ColorList = std::vector<Color>;
+    using NodeId = std::size_t;
+    using NodeIds = std::unordered_set<NodeId>;
 
-enum class Color { Black, Blue, Green, Orange, Red, Yellow, White };
+    auto addNode(Color color) -> NodeId;
+    void addEdge(NodeId source, NodeId destination);
 
-struct Node {
-    Color color{};
-    std::vector<Edge> edges{};
+    bool hasPath(const ColorList &colorList) const;
+
+    auto nodesWithColor(Color color) const -> const NodeIds &;
+    auto nodesFromNode(NodeId nodeId) const -> const NodeIds &;
+
+   private:
+    NodeId nextNodeId_{};
+    std::unordered_map<Color, NodeIds> nodes_{};
+    std::unordered_map<NodeId, NodeIds> edges_{};
+
+    struct Runner;
+    using VisitedNodes = std::unordered_set<Graph::NodeId>;
+
+    auto createSeedRunners(const ColorList &colorList) const
+        -> std::tuple<bool, std::deque<Runner>>;
+    auto nextRunnerStep(const Runner &runner) const
+        -> std::tuple<bool, std::vector<Runner>>;
 };
-using Graph = std::vector<Node>;
-
-using ColorList = std::vector<Color>;
-
-bool has_path(const Graph &graph, const ColorList &colorList);
 
 }  // namespace graph
