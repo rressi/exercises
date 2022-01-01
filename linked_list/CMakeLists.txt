@@ -1,4 +1,3 @@
-include(AddProtos)
 
 add_executable(
         test_linked_list
@@ -11,18 +10,12 @@ add_executable(
         list.t.cpp
 )
 
+include(AddProtos)
 add_protos(TARGET test_linked_list
            PROTOC_OUT_DIR "${CMAKE_CURRENT_LIST_DIR}"
            PROTOS node.proto)
 
-
-target_link_libraries(
-        test_linked_list 
-        
-        PRIVATE 
-        gtest_main
-        libprotobuf
-)
+target_link_libraries(test_linked_list PRIVATE gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(test_linked_list)

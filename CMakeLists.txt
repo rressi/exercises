@@ -3,7 +3,7 @@ project(life++)
 
 set(CMAKE_CXX_STANDARD 17)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 enable_testing()
 
@@ -13,8 +13,6 @@ add_subdirectory(dynamic_programming)
 add_subdirectory(edit_distance)
 add_subdirectory(find_n_best)
 add_subdirectory(hex_bin_match)
-if(NOT MSVC)
-    add_subdirectory(linked_list)
-endif()
+add_subdirectory(linked_list)
 add_subdirectory(graph)
 add_subdirectory(sieve_of_eratosthenes)

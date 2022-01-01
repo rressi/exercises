@@ -56,9 +56,8 @@ function(add_protos)
 
     endforeach()
     set_source_files_properties(${_generated_srcs_all} PROPERTIES GENERATED TRUE)
+        
+    target_sources(${add_protos_TARGET} PRIVATE ${_generated_srcs_all})
+    target_link_libraries(${add_protos_TARGET} PRIVATE libprotobuf)
     
-    if(add_protos_TARGET)
-        target_sources(${add_protos_TARGET} PRIVATE ${_generated_srcs_all})
-    endif()
-
 endfunction(add_protos)
