@@ -10,7 +10,6 @@
 #include "node.h"
 #include "node_iterator.h"
 
-
 namespace linked_list {
 
 template <class T>
@@ -76,6 +75,7 @@ class List final {
     bool isSorted_{true};
 
     List(Ptr<Node> head, Node* tail, std::size_t size, bool isSorted);
+    List(Ptr<Node> head);
 
     void copyAssign(const List& other);
 };
