@@ -2,6 +2,9 @@
 add_executable(
         test_graph
 
+        color.cpp
+        color.h
+
         graph.cpp
         graph.h
         graph.t.cpp

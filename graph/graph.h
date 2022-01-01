@@ -6,12 +6,12 @@
 #include <unordered_set>
 #include <vector>
 
+#include "color.h"
+
 namespace graph {
 
 class Graph {
    public:
-    enum class Color { Black, Blue, Green, Orange, Red, Yellow, White };
-    using ColorList = std::vector<Color>;
     using NodeId = std::size_t;
     using NodeIds = std::unordered_set<NodeId>;
 
