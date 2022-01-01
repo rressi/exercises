@@ -25,6 +25,21 @@ List::List(const List& other) : size_(other.size_), isSorted_(other.isSorted_) {
 List::List(Ptr<Node> head, Node* tail, std::size_t size, bool isSorted)
     : head_(std::move(head)), tail_(tail), size_(size), isSorted_(isSorted) {}
 
+List::List(Ptr<Node> head) {
+    if (!head) return;
+
+    head_ = std::move(head);
+    tail_ = head_.get();
+    size_ = 1;
+    isSorted_ = true;
+
+    while (tail_->has_next()) {
+        size_++;
+        isSorted_ = isSorted_ && bool(tail_->value() <= tail_->next().value());
+        tail_ = tail_->mutable_next();
+    }
+}
+
 auto List::operator=(const List& other) -> List& {
     copyAssign(other);
     return *this;
@@ -248,56 +263,36 @@ auto List::popFront() -> Ptr<Node> {
 void List::pushFront(Ptr<Node> newNode) {
     if (!newNode) return;
 
-    auto newNodeTail = newNode.get();
-    auto newNodeSize = std::size_t(1);
-    auto newNodeIsSorted = true;
-
-    while (newNodeTail->has_next()) {
-        newNodeSize++;
-        newNodeIsSorted = newNodeIsSorted && bool(newNodeTail->value() <=
-                                                  newNodeTail->next().value());
-        newNodeTail = newNodeTail->mutable_next();
-    }
-
+    auto newList = List(std::move(newNode));
     if (head_) {
-        newNodeTail->set_allocated_next(head_.release());
-        newNodeIsSorted =
-            newNodeIsSorted && isSorted_ &&
-            bool(newNodeTail->value() <= newNodeTail->next().value());
+        newList.tail_->set_allocated_next(head_.release());
+        isSorted_ =
+            newList.isSorted_ && isSorted_ &&
+            bool(newList.tail_->value() <= newList.tail_->next().value());
     } else {
-        tail_ = newNodeTail;
+        tail_ = newList.tail_;
+        isSorted_ = newList.isSorted_;
     }
 
-    head_ = std::move(newNode);
-    size_ += newNodeSize;
-    isSorted_ = newNodeIsSorted;
+    head_ = std::move(newList.head_);
+    size_ += newList.size_;
 }
 
 void List::pushBack(Ptr<Node> newNode) {
     if (!newNode) return;
 
-    auto newNodeTail = newNode.get();
-    auto newNodeSize = std::size_t(1);
-    auto newNodeIsSorted = true;
-
-    while (newNodeTail->has_next()) {
-        newNodeSize++;
-        newNodeIsSorted = newNodeIsSorted && bool(newNodeTail->value() <=
-                                                  newNodeTail->next().value());
-        newNodeTail = newNodeTail->mutable_next();
-    }
-
+    auto newList = List(std::move(newNode));
     if (tail_) {
-        tail_->set_allocated_next(newNode.release());
-        newNodeIsSorted = newNodeIsSorted && isSorted_ &&
-                          bool(tail_->value() <= tail_->next().value());
+        tail_->set_allocated_next(newList.head_.release());
+        isSorted_ = newList.isSorted_ && isSorted_ &&
+                    bool(tail_->value() <= tail_->next().value());
     } else {
-        head_ = std::move(newNode);
+        head_ = std::move(newList.head_);
+        isSorted_ = newList.isSorted_;
     }
 
-    tail_ = newNodeTail;
-    size_ += newNodeSize;
-    isSorted_ = newNodeIsSorted;
+    tail_ = newList.tail_;
+    size_ += newList.size_;
 }
 
 void List::copyAssign(const List& other) {
