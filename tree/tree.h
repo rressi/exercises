@@ -3,7 +3,7 @@
 #include <functional>
 #include <string>
 
-#include "node.pb.h"
+#include "tree.pb.h"
 
 namespace tree {
 
@@ -14,7 +14,10 @@ class Tree {
 
     using Depth = std::size_t;
     using VisitCallback = std::function<bool(pb::Node* node, Depth depth)>;
+
+    void visitBreathFirst(VisitCallback visitCallback);
     void visitDepthFirst(VisitCallback visitCallback);
+
     void visitPreOrder(VisitCallback visitCallback);
     void visitInOrder(VisitCallback visitCallback);
     void visitPostOrder(VisitCallback visitCallback);

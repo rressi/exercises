@@ -10,7 +10,7 @@ add_executable(
 include(AddProtos)
 add_protos(TARGET test_tree
        PROTOC_OUT_DIR "${CMAKE_CURRENT_LIST_DIR}"
-       PROTOS node.proto)
+       PROTOS tree.proto)
 
 target_link_libraries(test_tree PRIVATE gtest_main)
 

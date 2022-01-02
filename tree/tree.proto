@@ -1,7 +1,11 @@
 syntax = "proto3";
 package tree.pb;
 
+message Value {
+    int64 numeric = 1;
+}
+
 message Node {
     repeated Node children = 1;
-    string value = 2;
+    Value value = 2;
 }
