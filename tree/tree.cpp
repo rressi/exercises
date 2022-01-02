@@ -7,240 +7,233 @@
 namespace tree {
 namespace {
 
-void visitBreathFirst(pb::Node* node, Tree::Depth depth,
-                      Tree::VisitCallback visitCallback) {
-    using Task = std::tuple<pb::Node*, Tree::Depth>;
+using Depth = Tree::Depth;
+using Node = pb::Node;
+using VisitStatus = Tree::VisitStatus;
+using VisitCallback = Tree::VisitCallback;
+
+void visitBreathFirst(const Node& node, Depth startDepth,
+                      const VisitCallback& visitCallback) {
+    using Task = std::tuple<const Node*, Depth>;
     auto queue = std::queue<Task>();
-    queue.emplace(node, depth);
+    queue.emplace(&node, startDepth);
 
     while (!queue.empty()) {
         auto [node, depth] = queue.front();
         queue.pop();
 
-        auto continueLoop = visitCallback(node, depth);
-        if (!continueLoop) return;
+        auto status = visitCallback(*node, depth);
+        if (status != VisitStatus::CONTINUE) return;
 
-        if (auto numChildren = node->children_size()) {
-            auto children = node->mutable_children();
-            for (auto& child : *children) {
-                if (child.has_value()) {
-                    queue.emplace(&child, depth + 1);
-                }
-            }
+        for (const auto& child : node->children()) {
+            queue.emplace(&child, depth + 1);
         }
     }
 }
 
-void visitDepthFirst(pb::Node* node, Tree::Depth depth,
-                     Tree::VisitCallback visitCallback) {
-    using Task = std::tuple<pb::Node*, Tree::Depth>;
+void visitDepthFirst(const Node& node, Depth startDepth,
+                     const VisitCallback& visitCallback) {
+    using Task = std::tuple<const Node*, Depth>;
     auto stack = std::stack<Task>();
-    stack.emplace(node, depth);
+    stack.emplace(&node, startDepth);
 
     while (!stack.empty()) {
         auto [node, depth] = stack.top();
         stack.pop();
 
-        auto continueLoop = visitCallback(node, depth);
-        if (!continueLoop) return;
+        auto status = visitCallback(*node, depth);
+        if (status != Tree::VisitStatus::CONTINUE) return;
 
-        if (auto numChildren = node->children_size()) {
-            auto children = node->mutable_children();
-            for (auto& child : *children) {
-                if (child.has_value()) {
-                    stack.emplace(&child, depth + 1);
-                }
-            }
+        auto childrenStart = node->children().rbegin();
+        auto childrenEnd = node->children().rend();
+        for (auto it = childrenStart; it != childrenEnd; it++) {
+            const auto& child = *it;
+            stack.emplace(&child, depth + 1);
         }
     }
 }
 
-auto getLeft(pb::Node* node) -> pb::Node* {
+auto getLeft(const Node& node) -> const Node* {
     constexpr auto INDEX_OF_LEFT_NODE = 0;
 
-    if (node && node->children_size() >= INDEX_OF_LEFT_NODE) {
-        auto& child = node->mutable_children()->at(INDEX_OF_LEFT_NODE);
-        if (child.has_value()) {
-            return &child;
-        }
+    if (node.children_size() > INDEX_OF_LEFT_NODE) {
+        const auto& child = node.children().at(INDEX_OF_LEFT_NODE);
+        return &child;
     }
+
     return nullptr;
 }
 
-auto getRight(pb::Node* node) -> pb::Node* {
+auto getRight(const Node& node) -> const Node* {
     constexpr auto INDEX_OF_RIGHT_NODE = 1;
 
-    if (node && node->children_size() >= INDEX_OF_RIGHT_NODE) {
-        auto& child = node->mutable_children()->at(INDEX_OF_RIGHT_NODE);
-        if (child.has_value()) {
-            return &child;
-        }
+    if (node.children_size() > INDEX_OF_RIGHT_NODE) {
+        auto& child = node.children().at(INDEX_OF_RIGHT_NODE);
+        return &child;
     }
+
     return nullptr;
 }
 
-bool visitPreOrder(pb::Node* node, Tree::Depth depth,
-                   Tree::VisitCallback visitCallback) {
-    if (node->children_size() > 2) {
+auto visitPreOrder(const Node& node, Depth depth,
+                   const VisitCallback& visitCallback) -> VisitStatus {
+    if (node.children_size() > 2) {
         throw std::runtime_error(
             "In order scan have sense onlyt on binary trees");
     }
 
-    if (!visitCallback(node, depth)) {
-        return false;
-    }
+    auto status = visitCallback(node, depth);
+    if (status != VisitStatus::CONTINUE) return status;
 
     if (auto child = getLeft(node)) {
-        if (!visitPreOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitPreOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
     if (auto child = getRight(node)) {
-        if (!visitPreOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitPreOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
-    return true;
+    return VisitStatus::CONTINUE;
 }
 
-bool visitInOrder(pb::Node* node, Tree::Depth depth,
-                  Tree::VisitCallback visitCallback) {
-    if (node->children_size() > 2) {
+auto visitInOrder(const Node& node, Depth depth,
+                  const VisitCallback& visitCallback) -> Tree::VisitStatus {
+    if (node.children_size() > 2) {
         throw std::runtime_error(
             "In order scan have sense onlyt on binary trees");
     }
 
     if (auto child = getLeft(node)) {
-        if (!visitInOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitInOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
-    if (!visitCallback(node, depth)) {
-        return false;
-    }
+    auto status = visitCallback(node, depth);
+    if (status != VisitStatus::CONTINUE) return status;
 
     if (auto child = getRight(node)) {
-        if (!visitInOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitInOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
-    return true;
+    return VisitStatus::CONTINUE;
 }
 
-bool visitPostOrder(pb::Node* node, Tree::Depth depth,
-                    Tree::VisitCallback visitCallback) {
-    if (node->children_size() > 2) {
+auto visitPostOrder(const Node& node, Depth depth,
+                    const VisitCallback& visitCallback) -> VisitStatus {
+    if (node.children_size() > 2) {
         throw std::runtime_error(
             "In order scan have sense onlyt on binary trees");
     }
 
     if (auto child = getLeft(node)) {
-        if (!visitPostOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitPostOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
     if (auto child = getRight(node)) {
-        if (!visitPostOrder(child, depth + 1, visitCallback)) {
-            return false;
+        auto status = visitPostOrder(*child, depth + 1, visitCallback);
+        if (status != VisitStatus::CONTINUE) {
+            return status;
         }
     }
 
-    if (!visitCallback(node, depth)) {
-        return false;
-    }
+    auto status = visitCallback(node, depth);
+    if (status != VisitStatus::CONTINUE) return status;
 
-    return true;
+    return VisitStatus::CONTINUE;
 }
 
 }  // namespace
 
-void Tree::visit(VisitCallback visitCallback, VisitOrder visitOrder) {
+void Tree::visit(const VisitCallback& visitCallback,
+                 VisitOrder visitOrder) const {
+    constexpr auto ZERO_DEPTH = Depth();
+
     switch (visitOrder) {
         case VisitOrder::DEPTH_FIRST:
-            tree::visitDepthFirst(&root_, 0, visitCallback);
+            tree::visitDepthFirst(root_, ZERO_DEPTH, visitCallback);
             break;
         case VisitOrder::BREATH_FIRST:
-            tree::visitBreathFirst(&root_, 0, visitCallback);
+            tree::visitBreathFirst(root_, ZERO_DEPTH, visitCallback);
             break;
         case VisitOrder::PRE_ORDER:
-            tree::visitPreOrder(&root_, 0, visitCallback);
+            tree::visitPreOrder(root_, ZERO_DEPTH, visitCallback);
             break;
         case VisitOrder::IN_ORDER:
-            tree::visitInOrder(&root_, 0, visitCallback);
+            tree::visitInOrder(root_, ZERO_DEPTH, visitCallback);
             break;
         case VisitOrder::POST_ORDER:
-            tree::visitPostOrder(&root_, 0, visitCallback);
+            tree::visitPostOrder(root_, ZERO_DEPTH, visitCallback);
             break;
     }
 }
 
-// namespace {
+void Tree::update(const UpdateCallback& updateCallback, VisitOrder visitOrder) {
+    auto onVisitNode = [&updateCallback](const pb::Node& node, Depth depth) {
+        return updateCallback(const_cast<pb::Node*>(&node), depth);
+    };
+    visit(onVisitNode, visitOrder);
+}
 
-// auto mutableLeft(pb::Node* node, const pb::Value& defaultValue) -> pb::Node*
-// {
-//     constexpr auto INDEX_OF_LEFT_NODE = 0;
+namespace {
 
-//     if (!node) return nullptr;
+template <class N>
+auto discreteSquareRoot(N x) -> N {
+    auto y = N();
+    while (x) {
+        y++;
+        x /= 2;
+    }
+    return y;
+}
 
-//     if (node->children_size() <= INDEX_OF_LEFT_NODE) {
-//         auto newChild = node->add_children();
-//         auto newValue = newChild->mutable_value();
-//         (*newValue) = defaultValue;
-//         return newChild;
-//     }
-
-//     auto& child = node->mutable_children()->at(INDEX_OF_LEFT_NODE);
-//     return &child;
-// }
-
-// auto mutableRight(pb::Node* node, const pb::Value& defaultValue) -> pb::Node*
-// {
-//     constexpr auto INDEX_OF_LEFT_NODE = 0;
-//     constexpr auto INDEX_OF_RIGHT_NODE = 1;
-
-//     if (!node) return nullptr;
-
-//     if (node->children_size() <= INDEX_OF_LEFT_NODE) {
-//         auto newChild = node->add_children();
-//     }
-
-//     if (node->children_size() <= INDEX_OF_RIGHT_NODE) {
-//         auto newChild = node->add_children();
-//         auto newValue = newChild->mutable_value();
-//         (*newValue) = defaultValue;
-//         return newChild;
-//     }
-
-//     auto& child = node->mutable_children()->at(INDEX_OF_RIGHT_NODE);
-//     return &child;
-// }
-
-// }  // namespace
+}  // namespace
 
 auto createBinaryTree(const std::vector<pb::Value>& inputValues,
-                      Tree::VisitOrder visitOrder) -> Tree {
-    auto nextNodeIndex = std::size_t(0);
-    auto onNewNode = [&](pb::Node* node, Tree::Depth) {
-        auto nevValue = node->mutable_value();
+                      Tree::VisitOrder visitOrder) -> Opt<Tree> {
+    using Depth = Tree::Depth;
 
-        (*nevValue) = inputValues[nextNodeIndex];
-        nextNodeIndex++;
-        if (nextNodeIndex == inputValues.size()) {
-            return false;
-        }
-
-        node->add_children();
-        node->add_children();
-        return true;
-    };
+    if (inputValues.empty()) {
+        return {};
+    }
 
     auto tree = Tree();
-    tree.visit(onNewNode, visitOrder);
+
+    auto maxDepth = discreteSquareRoot<Depth>(inputValues.size()) - 1;
+    auto onCreateNode = [maxDepth](pb::Node* node, Depth depth) {
+        if (depth < maxDepth) {
+            node->add_children();
+            node->add_children();
+        }
+        return VisitStatus::CONTINUE;
+    };
+    tree.update(onCreateNode, Tree::VisitOrder::BREATH_FIRST);
+
+    auto nextNodeIndex = std::size_t(0);
+    auto onVisitNode = [&](pb::Node* node, Depth depth) {
+        auto nevValue = node->mutable_value();
+        (*nevValue) = inputValues[nextNodeIndex];
+        nextNodeIndex++;
+
+        auto hasFinished = bool(nextNodeIndex == inputValues.size());
+        return hasFinished ? VisitStatus::FINISH  //
+                           : VisitStatus::CONTINUE;
+    };
+    tree.update(onVisitNode, visitOrder);
+
     return tree;
 }
 
