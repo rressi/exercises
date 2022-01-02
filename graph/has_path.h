@@ -38,12 +38,11 @@ class HasPathTask {
     using VisitedNodes = Set<std::tuple<NodeId, ColorIndex>>;
 
     HasPathTask() = default;
-    explicit HasPathTask(const Graph& graph, const ColorList& colorList,
-                         Shared<VisitedNodes> visitedNodes, NodeId nodeId,
-                         ColorIndex colorIndex);
+    HasPathTask(const Graph& graph, const ColorList& colorList,
+                Shared<VisitedNodes> visitedNodes, NodeId nodeId,
+                ColorIndex colorIndex);
     HasPathTask(const HasPathTask& other) = default;
     ~HasPathTask() = default;
-    ;
 
     auto operator=(const HasPathTask& other) -> HasPathTask& = default;
     bool operator<(const HasPathTask& other) const;
