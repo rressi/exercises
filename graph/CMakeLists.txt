@@ -7,7 +7,10 @@ add_executable(
 
         graph.cpp
         graph.h
-        graph.t.cpp
+
+        has_path.cpp
+        has_path.h
+        has_path.t.cpp
 )
 
 target_link_libraries(test_graph PRIVATE gtest_main)
