@@ -23,7 +23,7 @@ auto HasPathTask::start(const Graph& graph, const ColorList& colorList,
     if (colorList.empty()) return Status::FAIL;
 
     auto firstColor = colorList.front();
-    auto nodeIds = graph.nodesWithColor(firstColor);
+    auto nodeIds = graph.findNodesByColor(firstColor);
     if (nodeIds.empty()) return Status::FAIL;
     if (colorList.size() == 1) return Status::SUCCESS;
 
@@ -41,12 +41,12 @@ auto HasPathTask::start(const Graph& graph, const ColorList& colorList,
 
 auto HasPathTask::execute(Queue<HasPathTask>* taskQueue) const -> Status {
     auto nextColor = colorList_->at(colorIndex_);
-    const auto& nodesWithNextColor = graph_->nodesWithColor(nextColor);
+    const auto& nodesWithNextColor = graph_->findNodesByColor(nextColor);
     if (nodesWithNextColor.empty()) {
         return Status::CONTINUE;
     }
 
-    for (auto nextNodeId : graph_->nodesFromNode(nodeId_)) {
+    for (auto nextNodeId : graph_->findLinkedNodes(nodeId_)) {
         auto taskId = std::make_tuple(nextNodeId, colorIndex_);
         auto [_, newInsertion] = visitedNodes_->emplace(taskId);
         if (!newInsertion) {

@@ -8,7 +8,6 @@
 
 #include "color.h"
 
-
 namespace graph {
 
 class Graph {
@@ -19,8 +18,8 @@ class Graph {
     auto addNode(Color color) -> NodeId;
     void addEdge(NodeId source, NodeId destination);
 
-    auto nodesWithColor(Color color) const -> const NodeIds &;
-    auto nodesFromNode(NodeId nodeId) const -> const NodeIds &;
+    auto findNodesByColor(Color color) const -> const NodeIds &;
+    auto findLinkedNodes(NodeId nodeId) const -> const NodeIds &;
 
     bool hasPath(const ColorList &colorList) const;
 

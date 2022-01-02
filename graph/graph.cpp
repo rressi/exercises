@@ -5,7 +5,6 @@
 
 #include "has_path.h"
 
-
 namespace graph {
 
 auto Graph::addNode(Color color) -> NodeId {
@@ -25,7 +24,7 @@ void Graph::addEdge(NodeId source, NodeId destination) {
     edges_[source].insert(destination);
 }
 
-auto Graph::nodesWithColor(Color color) const -> const NodeIds& {
+auto Graph::findNodesByColor(Color color) const -> const NodeIds& {
     auto nodesByColorIt = nodes_.find(color);
     if (nodesByColorIt == nodes_.end()) {
         static const auto NO_NODE_IDS = NodeIds();
@@ -34,7 +33,7 @@ auto Graph::nodesWithColor(Color color) const -> const NodeIds& {
     return nodesByColorIt->second;
 }
 
-auto Graph::nodesFromNode(NodeId nodeId) const -> const NodeIds& {
+auto Graph::findLinkedNodes(NodeId nodeId) const -> const NodeIds& {
     auto edgesIt = edges_.find(nodeId);
     if (edgesIt == edges_.end()) {
         static const auto NO_NODE_IDS = NodeIds();
