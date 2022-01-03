@@ -1,6 +1,6 @@
 #include "robot_navigator.h"
 
-namespace dynamic_programming::robot_navigator {
+namespace dp::robot_navigator {
 namespace {
 
 class Grid {
@@ -48,12 +48,12 @@ auto findPathRecursion(Grid *grid, const Pos &goal) -> Opt<Path> {
 
     if (auto path = findPathRecursion(grid, Pos{goal.x - 1, goal.y})) {
         path->push_back(goal);
-        if (path) return path;
+        return path;
     }
 
     if (auto path = findPathRecursion(grid, Pos{goal.x, goal.y - 1})) {
         path->push_back(goal);
-        if (path) return path;
+        return path;
     }
 
     grid->setBlocked(goal);
@@ -64,10 +64,10 @@ auto findPathRecursion(Grid *grid, const Pos &goal) -> Opt<Path> {
 
 auto findPath(Blockers blockers) -> Opt<Path> {
     auto grid = Grid(std::move(blockers));
-    auto goal =
-        Pos{std::max(0, grid.width() - 1), std::max(0, grid.height() - 1)};
-
+    auto goalX = std::max(0, grid.width() - 1);
+    auto goalY = std::max(0, grid.height() - 1);
+    auto goal = Pos{goalX, goalY};
     return findPathRecursion(&grid, goal);
 }
 
-}  // namespace dynamic_programming::robot_navigator
+}  // namespace dp::robot_navigator
