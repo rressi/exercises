@@ -3,6 +3,10 @@ add_executable(
 
         test_dynamic_programming
 
+        all_permutations.h
+        all_permutations.cpp
+        all_permutations.t.cpp
+
         all_subsets.h
         all_subsets.t.cpp
 
