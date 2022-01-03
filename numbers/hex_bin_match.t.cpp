@@ -3,7 +3,9 @@
 
 #include "hex_bin_match.h"
 
-namespace hex_bin_match {
+
+namespace numbers {
+namespace {
 
 struct TestCase {
     HexStringView hex{};
@@ -11,19 +13,21 @@ struct TestCase {
     bool expectedOutcome{};
 };
 
-class UnitHexBinMatch : public ::testing::TestWithParam<TestCase> {
+}  // namespace
+
+class TestHexBinMatch : public ::testing::TestWithParam<TestCase> {
    public:
     static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
-TEST_P(UnitHexBinMatch, run) {
-    const auto &param = UnitHexBinMatch::GetParam();
+TEST_P(TestHexBinMatch, run) {
+    const auto &param = TestHexBinMatch::GetParam();
     EXPECT_EQ(param.expectedOutcome, matchHexAndBin(param.hex, param.bin));
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    UnitHexBinMatch, UnitHexBinMatch,
+    TestHexBinMatch, TestHexBinMatch,
     testing::Values(
 
         TestCase{"0", "0000", true}, TestCase{"1", "0001", true},
@@ -66,13 +70,13 @@ INSTANTIATE_TEST_SUITE_P(
                  true}
 
         ),
-    &UnitHexBinMatch::getTestName);
+    &TestHexBinMatch::getTestName);
 
-auto UnitHexBinMatch::getTestName(
+auto TestHexBinMatch::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     const auto &param = testInfo.param;
     return std::string(param.hex) + "_" + std::string(param.bin) + "_" +
            std::to_string(param.expectedOutcome);
 }
 
-}  // namespace hex_bin_match
+}  // namespace numbers
