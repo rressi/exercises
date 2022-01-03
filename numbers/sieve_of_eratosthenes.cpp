@@ -7,8 +7,7 @@
 #include <thread>
 #include <valarray>
 
-namespace sieve_of_eratosthenes {
-
+namespace numbers {
 namespace {
 
 auto getNumberOfCpus() -> unsigned {
@@ -112,4 +111,4 @@ auto findPrimeNumbers(Number maxNumber, Opt<unsigned> maxThreads)
     return primeNumbers;
 }
 
-}  // namespace sieve_of_eratosthenes
+}  // namespace numbers
