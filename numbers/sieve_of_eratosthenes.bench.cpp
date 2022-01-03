@@ -7,9 +7,9 @@ namespace {
 
 template <unsigned maxThreads>
 void BM_FindPrimeNumbers(benchmark::State &state) {
-    auto maxNumber = sieve_of_eratosthenes::Number(state.range(0));
+    auto maxNumber = numbers::Number(state.range(0));
     for (auto _ : state) {
-        sieve_of_eratosthenes::findPrimeNumbers(maxNumber, maxThreads);
+        numbers::findPrimeNumbers(maxNumber, maxThreads);
     }
     state.SetComplexityN(state.range(0));
 }
