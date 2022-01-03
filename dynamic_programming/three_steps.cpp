@@ -6,9 +6,9 @@
 #include <cassert>
 #include <unordered_map>
 
-namespace dynamic_programming {
+namespace dp {
 
-auto count_combinations_in_climbing_stairs(std::int64_t n) -> std::int64_t {
+auto countCombinationsInClimbingStairs(std::int64_t n) -> std::int64_t {
     if (n < 0) {
         return 0;
     }
@@ -25,8 +25,9 @@ auto count_combinations_in_climbing_stairs(std::int64_t n) -> std::int64_t {
 
 namespace {
 
-std::int64_t count_combinations_recursion(
-    std::int64_t size, std::unordered_map<std::int64_t, std::int64_t> *memo) {
+auto countCombinationsRecursion(
+    std::int64_t size, std::unordered_map<std::int64_t, std::int64_t> *memo)
+    -> std::int64_t {
     assert(memo != nullptr);
 
     if (size < 0) return 0;
@@ -37,9 +38,9 @@ std::int64_t count_combinations_recursion(
         return it->second;
     }
 
-    auto result = count_combinations_recursion(size - 1, memo) +
-                  count_combinations_recursion(size - 2, memo) +
-                  count_combinations_recursion(size - 3, memo);
+    auto result = countCombinationsRecursion(size - 1, memo) +
+                  countCombinationsRecursion(size - 2, memo) +
+                  countCombinationsRecursion(size - 3, memo);
 
     memo->emplace(size, result);
     return result;
@@ -47,7 +48,7 @@ std::int64_t count_combinations_recursion(
 
 }  // namespace
 
-auto count_combinations_in_climbing_stairs_recursive(std::int64_t n)
+auto countCombinationsInClimbingStairsRecursive(std::int64_t n)
     -> std::int64_t {
     if (n < 0) {
         return 0;
@@ -55,7 +56,7 @@ auto count_combinations_in_climbing_stairs_recursive(std::int64_t n)
 
     std::unordered_map<std::int64_t, std::int64_t> memo;
     memo.reserve(n);
-    return count_combinations_recursion(n, &memo);
+    return countCombinationsRecursion(n, &memo);
 }
 
-}  // namespace dynamic_programming
+}  // namespace dp

@@ -1,54 +1,51 @@
-
 #include <gtest/gtest.h>
 
 #include <iostream>
 
 #include "three_steps.h"
 
-namespace dynamic_programming {
 
-struct UnitThreeSteps_TestCase {
+namespace dp {
+namespace {
+
+struct TestCase {
     std::int64_t input{};
     std::int64_t expectedOutcome{};
 };
 
-class UnitThreeSteps
-    : public ::testing::TestWithParam<UnitThreeSteps_TestCase> {
-   public:
-    using TestCase = UnitThreeSteps_TestCase;
+}  // namespace
 
+class TestThreeSteps : public ::testing::TestWithParam<TestCase> {
+   public:
     static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
-TEST_P(UnitThreeSteps, test_count_combinations_in_climbing_stairs) {
-    const auto &param = UnitThreeSteps::GetParam();
+TEST_P(TestThreeSteps, testCountCombinationsInClimbingStairs) {
+    const auto &param = TestThreeSteps::GetParam();
     EXPECT_EQ(param.expectedOutcome,
-              count_combinations_in_climbing_stairs(param.input));
+              countCombinationsInClimbingStairs(param.input));
 }
 
-TEST_P(UnitThreeSteps, test_count_combinations_in_climbing_stairs_recursive) {
-    const auto &param = UnitThreeSteps::GetParam();
+TEST_P(TestThreeSteps, testCountCombinationsInClimbingStairsRecursive) {
+    const auto &param = TestThreeSteps::GetParam();
     EXPECT_EQ(param.expectedOutcome,
-              count_combinations_in_climbing_stairs_recursive(param.input));
+              countCombinationsInClimbingStairsRecursive(param.input));
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    UnitThreeSteps, UnitThreeSteps,
-    testing::Values(
+INSTANTIATE_TEST_SUITE_P(TestThreeSteps, TestThreeSteps,
+                         testing::Values(
 
-        UnitThreeSteps_TestCase{-1, 0}, UnitThreeSteps_TestCase{0, 1},
-        UnitThreeSteps_TestCase{1, 1}, UnitThreeSteps_TestCase{2, 2},
-        UnitThreeSteps_TestCase{3, 4}, UnitThreeSteps_TestCase{4, 7},
-        UnitThreeSteps_TestCase{5, 13}, UnitThreeSteps_TestCase{6, 24},
-        UnitThreeSteps_TestCase{7, 44},
+                             TestCase{-1, 0}, TestCase{0, 1}, TestCase{1, 1},
+                             TestCase{2, 2}, TestCase{3, 4}, TestCase{4, 7},
+                             TestCase{5, 13}, TestCase{6, 24}, TestCase{7, 44},
 
-        UnitThreeSteps_TestCase{40, 23'837'527'729}
+                             TestCase{40, 23'837'527'729}
 
-        ),
-    &UnitThreeSteps::getTestName);
+                             ),
+                         &TestThreeSteps::getTestName);
 
-auto UnitThreeSteps::getTestName(
+auto TestThreeSteps::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     const auto &param = testInfo.param;
     if (param.input < 0) {
@@ -58,11 +55,10 @@ auto UnitThreeSteps::getTestName(
     }
 }
 
-auto operator<<(std::ostream &out, const UnitThreeSteps::TestCase &testCase)
-    -> std::ostream & {
+auto operator<<(std::ostream &out, const TestCase &testCase) -> std::ostream & {
     out << "{\"input\": \"" << testCase.input << "\", \"expectedOutcome\": \""
         << testCase.expectedOutcome << "\"}";
     return out;
 }
 
-}  // namespace dynamic_programming
+}  // namespace dp
