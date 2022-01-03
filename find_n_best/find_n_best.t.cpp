@@ -1,6 +1,7 @@
 
 #include <gtest/gtest.h>
 
+#include <functional>
 #include <list>
 #include <random>
 #include <string>
@@ -10,56 +11,63 @@
 namespace find_n_best {
 
 template <class Container>
-class UnitFindNBest : public ::testing::Test {
+class TestFindNBest : public ::testing::Test {
    protected:
     using Value = typename Container::value_type;
+
+    template <class TargetFunction>
+    void runTest(TargetFunction &&targetFunction);
 
     auto generateValues(std::size_t numValues) -> Container;
 };
 
 using ContainerTypes = ::testing::Types<
 
-    std::vector<int>, std::list<int>, std::deque<int>,
+    std::vector<int>,  //
+    std::list<int>,    //
+    std::deque<int>,   //
 
-    std::vector<std::uint64_t>, std::list<std::uint64_t>,
-    std::deque<std::uint64_t>,
+    std::vector<std::uint64_t>,  //
+    std::list<std::uint64_t>,    //
+    std::deque<std::uint64_t>,   //
 
-    std::vector<std::string>, std::list<std::string>, std::deque<std::string>
+    std::vector<std::string>,  //
+    std::list<std::string>,    //
+    std::deque<std::string>    //
 
     >;
-TYPED_TEST_SUITE(UnitFindNBest, ContainerTypes);
+TYPED_TEST_SUITE(TestFindNBest, ContainerTypes);
 
-TYPED_TEST(UnitFindNBest, testFindNBest) {
-    constexpr auto NUM_VALUES = 10'000;
-    constexpr auto NUM_BIGGEST_VALUES = 100;
-
+TYPED_TEST(TestFindNBest, testFindBiggestItems) {
     using Container = TypeParam;
     using Value = typename Container::value_type;
 
-    auto values = this->generateValues(NUM_VALUES);
-    auto actualBiggestValues = findBiggestItems(values, NUM_BIGGEST_VALUES);
-    EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
-
-    auto expectedBiggestValues =
-        std::vector<Value>(values.begin(), values.end());
-    std::sort(expectedBiggestValues.begin(), expectedBiggestValues.end(),
-              std::greater<Value>());
-    expectedBiggestValues.resize(NUM_BIGGEST_VALUES);
-    EXPECT_EQ(NUM_BIGGEST_VALUES, expectedBiggestValues.size());
-
-    EXPECT_EQ(expectedBiggestValues, actualBiggestValues);
+    TestFindNBest<TypeParam>::runTest(
+        [](const Container &values, std::size_t numBest) {
+            return findBiggestItems(values, numBest);
+        });
 }
 
-TYPED_TEST(UnitFindNBest, testFindNBestWithHeap) {
-    constexpr auto NUM_VALUES = 10'000;
-    constexpr auto NUM_BIGGEST_VALUES = 100;
-
+TYPED_TEST(TestFindNBest, testFindBiggestItemsWithHeap) {
     using Container = TypeParam;
     using Value = typename Container::value_type;
 
-    auto values = this->generateValues(NUM_VALUES);
-    auto actualBiggestValues =
-        findBiggestItemsWithHeap(values, NUM_BIGGEST_VALUES);
+    TestFindNBest<TypeParam>::runTest(
+        [](const Container &values, std::size_t numBest) {
+            return findBiggestItemsWithHeap(values, numBest);
+        });
+}
+
+template <class Container>
+template <class TargetFunction>
+void TestFindNBest<Container>::runTest(TargetFunction &&targetFunction) {
+    constexpr auto NUM_VALUES = 10'000;
+    constexpr auto NUM_BIGGEST_VALUES = 100;
+
+    using Value = typename Container::value_type;
+
+    auto values = generateValues(NUM_VALUES);
+    auto actualBiggestValues = targetFunction(values, NUM_BIGGEST_VALUES);
     EXPECT_EQ(NUM_BIGGEST_VALUES, actualBiggestValues.size());
 
     auto expectedBiggestValues =
@@ -94,7 +102,7 @@ auto generateValue<std::string>(RandomGenerator *randomGenerator)
 }
 
 template <class Container>
-auto UnitFindNBest<Container>::generateValues(std::size_t numValues)
+auto TestFindNBest<Container>::generateValues(std::size_t numValues)
     -> Container {
     auto values = Container();
 
