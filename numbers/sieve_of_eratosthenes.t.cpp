@@ -3,36 +3,39 @@
 
 #include "sieve_of_eratosthenes.h"
 
-namespace sieve_of_eratosthenes {
+namespace numbers {
 
-struct TestCaseSequential {
+// --- TestSieveOfEratosthenes_Sequential ---
+
+struct TestCase_Sequential {
     Number maxNumber{};
     std::vector<Number> expectedOutcome{};
 };
 
-class UnitSieveOfEratosthenesSequential
-    : public ::testing::TestWithParam<TestCaseSequential> {
+class TestSieveOfEratosthenes_Sequential
+    : public ::testing::TestWithParam<TestCase_Sequential> {
    public:
-    static auto getTestName(
-        const ::testing::TestParamInfo<TestCaseSequential> &testInfo)
+    using TestCase = TestCase_Sequential;
+
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    UnitSieveOfEratosthenesSequential, UnitSieveOfEratosthenesSequential,
+    TestSieveOfEratosthenes_Sequential, TestSieveOfEratosthenes_Sequential,
     testing::Values(
 
-        TestCaseSequential{10, {2, 3, 5, 7}},
+        TestCase_Sequential{10, {2, 3, 5, 7}},
 
-        TestCaseSequential{97,
-                           {2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31, 37,
-                            41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89}},
+        TestCase_Sequential{97,
+                            {2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31, 37,
+                             41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89}},
 
-        TestCaseSequential{100,
-                           {2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31, 37, 41,
-                            43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97}},
+        TestCase_Sequential{100,
+                            {2,  3,  5,  7,  11, 13, 17, 19, 23, 29, 31, 37, 41,
+                             43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97}},
 
-        TestCaseSequential{
+        TestCase_Sequential{
             1'000,
             {2,   3,   5,   7,   11,  13,  17,  19,  23,  29,  31,  37,  41,
              43,  47,  53,  59,  61,  67,  71,  73,  79,  83,  89,  97,  101,
@@ -48,42 +51,44 @@ INSTANTIATE_TEST_SUITE_P(
              827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911,
              919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997}},
 
-        TestCaseSequential{}),
-    &UnitSieveOfEratosthenesSequential::getTestName);
+        TestCase_Sequential{}),
+    &TestSieveOfEratosthenes_Sequential::getTestName);
 
-TEST_P(UnitSieveOfEratosthenesSequential, testSequential) {
+TEST_P(TestSieveOfEratosthenes_Sequential, testSequential) {
     const auto &param = GetParam();
     constexpr auto ONE_THREAD = 1;
     EXPECT_EQ(param.expectedOutcome,
               findPrimeNumbers(param.maxNumber, ONE_THREAD));
 }
 
-auto UnitSieveOfEratosthenesSequential::getTestName(
-    const ::testing::TestParamInfo<TestCaseSequential> &testInfo)
-    -> std::string {
+auto TestSieveOfEratosthenes_Sequential::getTestName(
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     return "maxNumber_" + std::to_string(testInfo.param.maxNumber);
 }
 
+// --- TestSieveOfEratosthenes_Parallel ---
+
 using MaxNumber = Number;
 using MaxThreads = unsigned int;
-using TestCaseParallel = std::tuple<MaxNumber, MaxThreads>;
+using TestCase_Parallel = std::tuple<MaxNumber, MaxThreads>;
 
-class UnitSieveOfEratosthenesParallel
-    : public ::testing::TestWithParam<TestCaseParallel> {
+class TestSieveOfEratosthenes_Parallel
+    : public ::testing::TestWithParam<TestCase_Parallel> {
    public:
-    static auto getTestName(
-        const ::testing::TestParamInfo<TestCaseParallel> &testInfo)
+    using TestCase = TestCase_Parallel;
+
+    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    UnitSieveOfEratosthenesParallel, UnitSieveOfEratosthenesParallel,
+    TestSieveOfEratosthenes_Parallel, TestSieveOfEratosthenes_Parallel,
     ::testing::Combine(::testing::Values(1'000, 10'000, 100'000, 1'000'000),
                        ::testing::Values(1, 2, 4, 8, 16)),
-    &UnitSieveOfEratosthenesParallel::getTestName);
+    &TestSieveOfEratosthenes_Parallel::getTestName);
 
-TEST_P(UnitSieveOfEratosthenesParallel, testParallel) {
-    const auto &param = UnitSieveOfEratosthenesParallel::GetParam();
+TEST_P(TestSieveOfEratosthenes_Parallel, testParallel) {
+    const auto &param = TestSieveOfEratosthenes_Parallel::GetParam();
     auto maxNumber = std::get<0>(param);
 
     constexpr auto ONE_THREAD = 1;
@@ -101,12 +106,12 @@ TEST_P(UnitSieveOfEratosthenesParallel, testParallel) {
     }
 }
 
-auto UnitSieveOfEratosthenesParallel::getTestName(
-    const ::testing::TestParamInfo<TestCaseParallel> &testInfo) -> std::string {
+auto TestSieveOfEratosthenes_Parallel::getTestName(
+    const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     auto maxNumber = std::get<0>(testInfo.param);
     auto maxThreads = std::get<1>(testInfo.param);
     return "maxNumber_" + std::to_string(maxNumber) + "_maxThreads_" +
            std::to_string(maxThreads);
 }
 
-}  // namespace sieve_of_eratosthenes
+}  // namespace numbers
