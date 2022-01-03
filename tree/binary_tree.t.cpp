@@ -3,7 +3,7 @@
 
 #include "binary_tree.h"
 
-namespace binary_tree {
+namespace tree {
 
 class TestBinaryTree : public ::testing::Test {};
 
@@ -121,4 +121,4 @@ TEST_F(TestBinaryTree, testIsBinarySearchTree) {
         isBinarySearchTree(createBinaryTree({"a", "a", "a", "b", "b", "a"})));
 }
 
-}  // namespace binary_tree
+}  // namespace tree

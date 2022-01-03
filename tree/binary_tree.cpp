@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace binary_tree {
+namespace tree {
 
 auto createBinaryTreeNode(std::string value) -> Ptr<BinaryTreeNode> {
     auto newNode = std::make_unique<BinaryTreeNode>();
@@ -72,4 +72,4 @@ bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
     }
 }
 
-}  // namespace binary_tree
+}  // namespace tree

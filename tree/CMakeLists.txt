@@ -2,6 +2,10 @@
 add_executable(
     test_tree
 
+    binary_tree.cpp
+    binary_tree.h
+    binary_tree.t.cpp
+
     tree.cpp
     tree.h
     tree.t.cpp
