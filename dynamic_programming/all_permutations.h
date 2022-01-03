@@ -1,12 +1,14 @@
 #pragma once
 
+#include <set>
 #include <string>
-#include <unordered_set>
 
 namespace dp {
 
-using AllPermutations = std::unordered_set<std::string>;
+template <class Container>
+using AllPermutations = std::set<Container>;
 
-auto extractAllPermutations(const std::string &input) -> AllPermutations;
+auto extractAllPermutations(const std::string &input)
+    -> AllPermutations<std::string>;
 
 }  // namespace dp
