@@ -71,11 +71,11 @@ auto TestMagicKey::getTestName(
     auto name = std::string("case");
 
     for (auto &value : testInfo.param.inputValues) {
-        auto item = std::to_string(value);
-        if (item.front() == '-') {
-            item.front() = ' m';
+        if (value < 0) {
+            name.append("_minus").append(std::to_string(-value));
+        } else {
+            name.append("_").append(std::to_string(value));
         }
-        name.append("_").append(item);
     }
 
     return name;

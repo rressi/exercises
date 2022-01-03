@@ -8,6 +8,7 @@ add_executable(
 
         recursive_multiply.cpp
         recursive_multiply.h
+        recursive_multiply.t.cpp
         
         sieve_of_eratosthenes.h
         sieve_of_eratosthenes.cpp

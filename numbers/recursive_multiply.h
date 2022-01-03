@@ -5,18 +5,6 @@
 
 namespace numbers {
 
-using BinStringView = std::string_view;
-using HexStringView = std::string_view;
-
-bool matchHexAndBin(HexStringView hex, BinStringView bin);
-
-auto readBinDigits(BinStringView bin, unsigned n)
-    -> std::tuple<unsigned, BinStringView>;
-
-auto readHexDigit(HexStringView hex) -> std::tuple<unsigned, HexStringView>;
-
-auto decodeBinDigit(char digit) -> unsigned;
-
-auto decodeHexDigit(char digit) -> unsigned;
+auto recursiveMultiply(std::uint32_t a, std::uint32_t b) -> std::uint64_t;
 
 }  // namespace numbers
