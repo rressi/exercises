@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace dynamic_programming {
+namespace dp {
 
 template <class T>
 auto extractAllSubSets(const std::set<T> &source) -> std::set<std::set<T>> {
@@ -31,4 +31,4 @@ auto extractAllSubSets(const std::set<T> &source) -> std::set<std::set<T>> {
     return results;
 }
 
-}  // namespace dynamic_programming
+}  // namespace dp

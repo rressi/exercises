@@ -3,79 +3,90 @@
 
 #include "all_subsets.h"
 
-namespace dynamic_programming {
 
+namespace dp {
+
+using NumItems = std::size_t;
+using NumExpectedSubsets = std::size_t;
+using ExpectedOutcome = std::set<std::set<int>>;
 using TestName = std::string;
 
-struct UnitAllSubsets_TestCase {
-    std::size_t numItems{};
-    std::size_t numExpectedSubsets{};
-    std::set<std::set<int>> expectedOutcome{};
+struct TestAllSubsets_TestCase {
+    NumItems numItems{};
+
+    NumExpectedSubsets numExpectedSubsets{};
+    ExpectedOutcome expectedOutcome{};
 };
 
-class UnitAllSubsets
-    : public ::testing::TestWithParam<UnitAllSubsets_TestCase> {
+class TestAllSubsets
+    : public ::testing::TestWithParam<TestAllSubsets_TestCase> {
    public:
-    using TestCase = UnitAllSubsets_TestCase;
+    using TestCase = TestAllSubsets_TestCase;
 
     static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
-TEST_P(UnitAllSubsets, test) {
-    const auto &param = UnitAllSubsets::GetParam();
+TEST_P(TestAllSubsets, testExtractAllSubSets) {
+    const auto &param = TestAllSubsets::GetParam();
 
     auto source = std::set<int>();
-    for (auto i = 0; i < int(param.numItems); i++) {
-        source.insert(i);
+    for (auto i = NumItems(0); i < param.numItems; i++) {
+        source.insert(int(i));
     }
     ASSERT_EQ(param.numItems, source.size());
 
     auto actualOutcome = extractAllSubSets(source);
     EXPECT_EQ(param.numExpectedSubsets, actualOutcome.size());
-
     if (!param.expectedOutcome.empty()) {
         EXPECT_EQ(param.expectedOutcome, actualOutcome);
     }
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    UnitAllSubsets, UnitAllSubsets,
+    TestAllSubsets, TestAllSubsets,
     testing::Values(
 
-        UnitAllSubsets::TestCase{0, 1, {{}}},
-        UnitAllSubsets::TestCase{1, 2, {{}, {0}}},
-        UnitAllSubsets::TestCase{2, 4, {{}, {0}, {0, 1}, {1}}},
-        UnitAllSubsets::TestCase{
-            3, 8, {{}, {0}, {0, 1}, {0, 1, 2}, {0, 2}, {1}, {1, 2}, {2}}},
-        UnitAllSubsets::TestCase{4,
-                                 16,
-                                 {{},
-                                  {0},
-                                  {0, 1},
-                                  {0, 1, 2},
-                                  {0, 1, 2, 3},
-                                  {0, 1, 3},
-                                  {0, 2},
-                                  {0, 2, 3},
-                                  {0, 3},
-                                  {1},
-                                  {1, 2},
-                                  {1, 2, 3},
-                                  {1, 3},
-                                  {2},
-                                  {2, 3},
-                                  {3}}},
-
-        UnitAllSubsets::TestCase{10, 1UL << 10},
-        UnitAllSubsets::TestCase{15, 1UL << 15}
+        TestAllSubsets::TestCase{NumItems(0),  //
+                                 NumExpectedSubsets(1), ExpectedOutcome{{}}},
+        TestAllSubsets::TestCase{NumItems(1),  //
+                                 NumExpectedSubsets(2),
+                                 ExpectedOutcome{{}, {0}}},
+        TestAllSubsets::TestCase{NumItems(2),  //
+                                 NumExpectedSubsets(4),
+                                 ExpectedOutcome{{}, {0}, {0, 1}, {1}}},
+        TestAllSubsets::TestCase{
+            NumItems(3),  //
+            NumExpectedSubsets(8),
+            ExpectedOutcome{
+                {}, {0}, {0, 1}, {0, 1, 2}, {0, 2}, {1}, {1, 2}, {2}}},
+        TestAllSubsets::TestCase{NumItems(4),  //
+                                 NumExpectedSubsets(16),
+                                 ExpectedOutcome{{},
+                                                 {0},
+                                                 {0, 1},
+                                                 {0, 1, 2},
+                                                 {0, 1, 2, 3},
+                                                 {0, 1, 3},
+                                                 {0, 2},
+                                                 {0, 2, 3},
+                                                 {0, 3},
+                                                 {1},
+                                                 {1, 2},
+                                                 {1, 2, 3},
+                                                 {1, 3},
+                                                 {2},
+                                                 {2, 3},
+                                                 {3}}},
+        TestAllSubsets::TestCase{NumItems(10), NumExpectedSubsets(1UL << 10)},
+        TestAllSubsets::TestCase{NumItems(15), NumExpectedSubsets(1UL << 15)}
 
         ),
-    &UnitAllSubsets::getTestName);
+    &TestAllSubsets::getTestName);
 
-auto UnitAllSubsets::getTestName(
+auto TestAllSubsets::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     return "n_" + std::to_string(testInfo.param.numItems);
 }
 
-}  // namespace dynamic_programming
+}  // namespace dp
