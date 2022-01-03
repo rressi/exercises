@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace binary_tree {
+namespace tree {
 
 template <class T>
 using Ptr = std::unique_ptr<T>;
@@ -37,4 +37,4 @@ bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
                         const Opt<std::string> &minValue = {},
                         const Opt<std::string> &maxValue = {});
 
-}  // namespace binary_tree
+}  // namespace tree
