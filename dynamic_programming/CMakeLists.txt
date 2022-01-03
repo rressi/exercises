@@ -6,6 +6,10 @@ add_executable(
         all_subsets.h
         all_subsets.t.cpp
 
+        edit_distance.cpp
+        edit_distance.h
+        edit_distance.t.cpp
+
         robot_navigator.cpp
         robot_navigator.h
         robot_navigator.t.cpp

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace edit_distance {
+namespace dp {
 
 bool matchStringsWithMaxEditDistanceOfOne(StringView s, StringView t);
 
@@ -66,4 +66,4 @@ auto calculateEditDistance(StringView s, StringView t) -> Distance {
     return matrix.back().back();
 }
 
-}  // namespace edit_distance
+}  // namespace dp

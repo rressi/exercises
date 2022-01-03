@@ -11,7 +11,6 @@ add_subdirectory(externals)
 
 add_subdirectory(binary_search)
 add_subdirectory(dynamic_programming)
-add_subdirectory(edit_distance)
 add_subdirectory(find_n_best)
 add_subdirectory(graph)
 add_subdirectory(hex_bin_match)
