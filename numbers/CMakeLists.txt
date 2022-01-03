@@ -5,6 +5,9 @@ add_executable(
         hex_bin_match.cpp
         hex_bin_match.h
         hex_bin_match.t.cpp
+
+        recursive_multiply.cpp
+        recursive_multiply.h
         
         sieve_of_eratosthenes.h
         sieve_of_eratosthenes.cpp
