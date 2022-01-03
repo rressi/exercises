@@ -11,7 +11,7 @@ add_executable(
         sieve_of_eratosthenes.t.cpp
 )
 
-target_link_libraries(test_numbers gtest_main)
+target_link_libraries(test_numbers PRIVATE gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(test_numbers)
@@ -22,4 +22,4 @@ add_executable(
         sieve_of_eratosthenes.bench.cpp
 )
 
-target_link_libraries(test_numbers benchmark::benchmark)
+target_link_libraries(bench_numbers PRIVATE benchmark::benchmark)
