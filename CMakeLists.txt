@@ -8,6 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 enable_testing()
 
 add_subdirectory(externals)
+
+add_subdirectory(binary_search)
 add_subdirectory(binary_tree)
 add_subdirectory(dynamic_programming)
 add_subdirectory(edit_distance)
