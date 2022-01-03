@@ -3,7 +3,7 @@
 #include <string>
 #include <tuple>
 
-namespace hex_bin_match {
+namespace numbers {
 
 using BinStringView = std::string_view;
 using HexStringView = std::string_view;
@@ -19,4 +19,4 @@ auto decodeBinDigit(char digit) -> unsigned;
 
 auto decodeHexDigit(char digit) -> unsigned;
 
-}  // namespace hex_bin_match
+}  // namespace numbers

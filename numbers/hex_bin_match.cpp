@@ -3,8 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-
-namespace hex_bin_match {
+namespace numbers {
 
 bool matchHexAndBin(HexStringView hex, BinStringView bin) {
     constexpr auto BITS_PER_HEX_DIGIT = 4;
@@ -104,4 +103,4 @@ auto decodeHexDigit(char digit) -> unsigned {
     }
 }
 
-}  // namespace hex_bin_match
+}  // namespace numbers

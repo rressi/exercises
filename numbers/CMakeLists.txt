@@ -2,6 +2,10 @@
 add_executable(
         test_numbers
 
+        hex_bin_match.cpp
+        hex_bin_match.h
+        hex_bin_match.t.cpp
+        
         sieve_of_eratosthenes.h
         sieve_of_eratosthenes.cpp
         sieve_of_eratosthenes.t.cpp
