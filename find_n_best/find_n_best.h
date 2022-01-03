@@ -11,10 +11,9 @@ template <class Container>
 auto findBiggestItems(Container &&values, std::size_t numBest)
     -> std::vector<typename std::decay<Container>::type::value_type> {
     using Value = typename std::decay<Container>::type::value_type;
+
     using PriorityQueue =
         std::priority_queue<Value, std::vector<Value>, std::greater<Value>>;
-    using Results = std::vector<Value>;
-
     auto priorityQueue = PriorityQueue();
     for (const Value &x : values) {
         priorityQueue.push(x);
@@ -23,6 +22,7 @@ auto findBiggestItems(Container &&values, std::size_t numBest)
         }
     }
 
+    using Results = std::vector<Value>;
     auto results = Results();
     results.reserve(priorityQueue.size());
     while (!priorityQueue.empty()) {
@@ -38,10 +38,9 @@ template <class Container>
 auto findBiggestItemsWithHeap(Container &&values, std::size_t numBest)
     -> std::vector<typename std::decay<Container>::type::value_type> {
     using Value = typename std::decay<Container>::type::value_type;
-    using Heap = std::vector<Value>;
-    using Results = std::vector<Value>;
 
-    auto heapQueue = Heap();
+    using HeapQueue = std::vector<Value>;
+    auto heapQueue = HeapQueue();
     heapQueue.reserve(numBest);
 
     for (const Value &x : values) {
