@@ -3,7 +3,9 @@
 
 #include "edit_distance.h"
 
-namespace edit_distance {
+
+namespace dp {
+namespace {
 
 struct TestCase {
     std::string a{};
@@ -12,20 +14,22 @@ struct TestCase {
     bool expectedOutcome{true};
 };
 
-class UnitEditDistance : public ::testing::TestWithParam<TestCase> {
+}  // namespace
+
+class TestEditDistance : public ::testing::TestWithParam<TestCase> {
    public:
     static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
         -> std::string;
 };
 
-TEST_P(UnitEditDistance, testMatchStrings) {
-    const auto &param = UnitEditDistance::GetParam();
+TEST_P(TestEditDistance, testMatchStrings) {
+    const auto &param = TestEditDistance::GetParam();
     EXPECT_EQ(param.expectedOutcome,
               matchStrings(param.a, param.b, param.maxDistance));
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    UnitEditDistance, UnitEditDistance,
+    TestEditDistance, TestEditDistance,
     testing::Values(
 
         TestCase{"foo", "foo", 0, true}, TestCase{"foo", "fo1", 0, false},
@@ -47,9 +51,9 @@ INSTANTIATE_TEST_SUITE_P(
         TestCase{"underground", "undrgrunz", 2, false},
 
         TestCase{}),
-    &UnitEditDistance::getTestName);
+    &TestEditDistance::getTestName);
 
-auto UnitEditDistance::getTestName(
+auto TestEditDistance::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
     const auto &param = testInfo.param;
     return std::string(param.a) + "_" + std::string(param.b) + "_" +
@@ -57,4 +61,4 @@ auto UnitEditDistance::getTestName(
            std::to_string(param.expectedOutcome);
 }
 
-}  // namespace edit_distance
+}  // namespace dp
