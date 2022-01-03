@@ -3,7 +3,7 @@
 #include <optional>
 #include <vector>
 
-namespace dynamic_programming::robot_navigator {
+namespace dp::robot_navigator {
 
 struct Pos {
     int x{};
@@ -23,4 +23,4 @@ using Opt = std::optional<T>;
 
 auto findPath(Blockers blockers) -> Opt<Path>;
 
-}  // namespace dynamic_programming::robot_navigator
+}  // namespace dp::robot_navigator
