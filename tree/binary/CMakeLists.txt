@@ -4,6 +4,10 @@ add_executable(
     binary_tree.cpp
     binary_tree.h
     binary_tree.t.cpp
+
+    binary_tree_visit.cpp
+    binary_tree_visit.h
+    binary_tree_visit.t.cpp
 )
 
 target_link_libraries(
