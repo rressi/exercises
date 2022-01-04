@@ -21,7 +21,7 @@ function(add_protos)
         return()
     endif()
     if(NOT add_protos_PROTOC_OUT_DIR)
-        set(add_protos_PROTOC_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+        set(add_protos_PROTOC_OUT_DIR "${CMAKE_CURRENT_LIST_DIR}")
     endif()
 
     get_target_property(_source_list ${add_protos_TARGET} SOURCES)
