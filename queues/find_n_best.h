@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace find_n_best {
+namespace queues {
 
 template <class Container>
 auto findBiggestItems(Container &&values, std::size_t numBest)
@@ -59,4 +59,4 @@ auto findBiggestItemsWithHeap(Container &&values, std::size_t numBest)
     return heapQueue;
 }
 
-}  // namespace find_n_best
+}  // namespace queues
