@@ -13,3 +13,6 @@
 [submodule "externals/protobuf"]
 	path = externals/protobuf
 	url = git@github.com:protocolbuffers/protobuf.git
+[submodule "externals/zlib"]
+	path = externals/zlib
+	url = git@github.com:madler/zlib.git
