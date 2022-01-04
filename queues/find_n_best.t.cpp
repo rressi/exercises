@@ -8,7 +8,7 @@
 
 #include "find_n_best.h"
 
-namespace find_n_best {
+namespace queues {
 
 template <class Container>
 class TestFindNBest : public ::testing::Test {
@@ -115,4 +115,4 @@ auto TestFindNBest<Container>::generateValues(std::size_t numValues)
     return values;
 }
 
-}  // namespace find_n_best
+}  // namespace queues
