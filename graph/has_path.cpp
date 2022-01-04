@@ -2,20 +2,66 @@
 #include "has_path.h"
 
 namespace graph {
+namespace {
 
-bool hasPath(const Graph& graph, const ColorList& colorList) {
-  using Status = HasPathTask::Status;
+template <class T>
+using Opt = std::optional<T>;
 
-  auto taskQueue = Queue<HasPathTask>();
-  auto status = HasPathTask::start(graph, colorList, &taskQueue);
-  while (status == Status::CONTINUE  //
-         && !taskQueue.empty()) {
-    auto task = std::move(taskQueue.top());
-    taskQueue.pop();
-    status = task.execute(&taskQueue);
-  }
+template <class T>
+using Set = std::set<T>;
 
-  return bool(status == Status::SUCCESS);
+template <class T>
+using Queue = std::priority_queue<T>;
+
+template <class T>
+using Shared = std::shared_ptr<T>;
+
+class HasPathTask {
+ public:
+  enum class Status { CONTINUE, FAIL, SUCCESS };
+
+  static auto start(const Graph& graph, const ColorList& colorList,
+                    Queue<HasPathTask>* taskQueue) -> Status;
+
+  using ColorIndex = std::size_t;
+  using NodeId = Graph::NodeId;
+  using VisitedNodes = Set<std::tuple<NodeId, ColorIndex>>;
+
+  HasPathTask() = default;
+  HasPathTask(const Graph& graph, const ColorList& colorList,
+              Shared<VisitedNodes> visitedNodes, NodeId nodeId,
+              ColorIndex colorIndex);
+  HasPathTask(const HasPathTask& other) = default;
+  ~HasPathTask() = default;
+
+  auto operator=(const HasPathTask& other) -> HasPathTask& = default;
+  bool operator<(const HasPathTask& other) const;
+
+  auto execute(Queue<HasPathTask>* taskQueue) const -> Status;
+
+ private:
+  const Graph* graph_{};
+  const ColorList* colorList_{};
+  Shared<VisitedNodes> visitedNodes_{};
+
+  NodeId nodeId_{};
+  std::size_t colorIndex_{};
+};
+
+HasPathTask::HasPathTask(const Graph& graph, const ColorList& colorList,
+                         Shared<VisitedNodes> visitedNodes, NodeId nodeId,
+                         ColorIndex colorIndex)
+    : graph_(&graph),
+      colorList_(&colorList),
+      visitedNodes_(visitedNodes),
+      nodeId_(nodeId),
+      colorIndex_(colorIndex) {
+  assert(graph_ != nullptr);
+  assert(colorList_ != nullptr);
+}
+
+bool HasPathTask::operator<(const HasPathTask& other) const {
+  return colorIndex_ < other.colorIndex_;
 }
 
 auto HasPathTask::start(const Graph& graph, const ColorList& colorList,
@@ -46,7 +92,7 @@ auto HasPathTask::execute(Queue<HasPathTask>* taskQueue) const -> Status {
     return Status::CONTINUE;
   }
 
-  for (auto nextNodeId : graph_->findLinkedNodes(nodeId_)) {
+  for (auto nextNodeId : graph_->findeNodesBySource(nodeId_)) {
     auto taskId = std::make_tuple(nextNodeId, colorIndex_);
     auto [_, newInsertion] = visitedNodes_->emplace(taskId);
     if (!newInsertion) {
@@ -67,6 +113,23 @@ auto HasPathTask::execute(Queue<HasPathTask>* taskQueue) const -> Status {
   }
 
   return Status::CONTINUE;
+}
+
+}  // namespace
+
+bool hasPath(const Graph& graph, const ColorList& colorList) {
+  using Status = HasPathTask::Status;
+
+  auto taskQueue = Queue<HasPathTask>();
+  auto status = HasPathTask::start(graph, colorList, &taskQueue);
+  while (status == Status::CONTINUE  //
+         && !taskQueue.empty()) {
+    auto task = std::move(taskQueue.top());
+    taskQueue.pop();
+    status = task.execute(&taskQueue);
+  }
+
+  return bool(status == Status::SUCCESS);
 }
 
 }  // namespace graph

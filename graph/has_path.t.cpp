@@ -70,22 +70,27 @@ INSTANTIATE_TEST_SUITE_P(
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Red}, ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Red, Color::Yellow},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Yellow, Color::Red},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{0}},
                                         WithNode{Color::Yellow, Edges{1}}},
                               ColorList{Color::Yellow, Color::Red},
                               ExpectedResult{false}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{0}},
                                         WithNode{Color::Yellow, Edges{}}},
                               ColorList{Color::Yellow, Color::Red},
                               ExpectedResult{false}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{0}},
                                         WithNode{Color::Yellow, Edges{1}}},
                               ColorList{Color::Yellow}, ExpectedResult{true}}
@@ -101,32 +106,38 @@ INSTANTIATE_TEST_SUITE_P(
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Red}, ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Red, Color::Green},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Green, Color::Yellow},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Yellow, Color::Red},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{
             WithGraph{WithNode{Color::Red, Edges{1}},
                       WithNode{Color::Green, Edges{2}},
                       WithNode{Color::Yellow, Edges{0}}},
             ColorList{Color::Yellow, Color::Red, Color::Green},
             ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{1}},
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
                               ColorList{Color::Red, Color::Yellow},
                               ExpectedResult{true}},
+
         TestHasPath::TestCase{WithGraph{WithNode{Color::Red, Edges{}},
                                         WithNode{Color::Green, Edges{2}},
                                         WithNode{Color::Yellow, Edges{0}}},
