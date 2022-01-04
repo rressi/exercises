@@ -28,11 +28,6 @@ auto createBinaryTree(std::vector<std::string>::const_iterator begin,
                       std::vector<std::string>::const_iterator end)
     -> Ptr<BinaryTreeNode>;
 
-bool isSubTree(const Ptr<BinaryTreeNode> &container,
-               const Ptr<BinaryTreeNode> &contained);
-bool isSubTree(const BinaryTreeNode *container,
-               const BinaryTreeNode *contained);
-
 bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
                         const Opt<std::string> &minValue = {},
                         const Opt<std::string> &maxValue = {});

@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+
 namespace tree::binary {
 
 auto createBinaryTreeNode(std::string value) -> Ptr<BinaryTreeNode> {
@@ -29,31 +30,6 @@ auto createBinaryTree(std::vector<std::string>::const_iterator begin,
   root->right = createBinaryTree(itPivot + 1, end);
 
   return root;
-}
-
-bool isSubTree(const Ptr<BinaryTreeNode> &container,
-               const Ptr<BinaryTreeNode> &contained) {
-  return isSubTree(container.get(), contained.get());
-}
-
-bool isSubTree(const BinaryTreeNode *container,
-               const BinaryTreeNode *contained) {
-  if (container && contained) {
-    if (container->value == contained->value &&
-        isSubTree(container->left.get(), contained->left.get()) &&
-        isSubTree(container->right.get(), contained->right.get())) {
-      return true;
-    } else {
-      return isSubTree(container->left.get(), contained) ||
-             isSubTree(container->right.get(), contained);
-    }
-  } else if (container) {
-    return true;
-  } else if (contained) {
-    return false;
-  } else {
-    return true;
-  }
 }
 
 bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,

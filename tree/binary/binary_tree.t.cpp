@@ -3,6 +3,7 @@
 
 #include "binary_tree.h"
 
+
 namespace tree::binary {
 
 class TestBinaryTree : public ::testing::Test {};
@@ -84,24 +85,6 @@ TEST_F(TestBinaryTree, testCreateBinaryTree_singleton) {
 TEST_F(TestBinaryTree, testCreateBinaryTree_void) {
   auto tree = createBinaryTree({});
   ASSERT_FALSE(tree);
-}
-
-TEST_F(TestBinaryTree, testIsSubTree) {
-  auto empty = createBinaryTree({});
-  ASSERT_FALSE(empty);
-  EXPECT_TRUE(isSubTree(empty, empty));
-
-  auto a = createBinaryTree({"a", "b", "c", "d", "e", "f", "g"});
-  ASSERT_TRUE(a);
-  EXPECT_TRUE(isSubTree(a, empty));
-  EXPECT_TRUE(isSubTree(a, a));
-  EXPECT_TRUE(isSubTree(a, createBinaryTree({"b", "d", "f"})));
-  EXPECT_TRUE(isSubTree(a, createBinaryTree({"a"})));
-  EXPECT_TRUE(isSubTree(a, createBinaryTree({"a", "b", "c"})));
-  EXPECT_TRUE(isSubTree(a, createBinaryTree({"e", "f", "g"})));
-  EXPECT_FALSE(isSubTree(a, createBinaryTree({"b", "c", "d"})));
-  EXPECT_FALSE(isSubTree(empty, a));
-  EXPECT_FALSE(isSubTree(createBinaryTree({"a", "b", "c"}), a));
 }
 
 TEST_F(TestBinaryTree, testIsBinarySearchTree) {
