@@ -1,4 +1,3 @@
-
 add_executable(
     test_tree
 
@@ -12,11 +11,18 @@ add_executable(
 )
 
 include(AddProtos)
-add_protos(TARGET test_tree
-       PROTOC_OUT_DIR "${CMAKE_CURRENT_LIST_DIR}"
-       PROTOS tree.proto)
+add_protos(
+    TARGET
+        test_tree
+    PROTOS
+        tree.proto
+)
 
-target_link_libraries(test_tree PRIVATE gtest_main)
+target_link_libraries(
+    test_tree 
+    PRIVATE 
+        gtest_main
+)
 
 include(GoogleTest)
 gtest_discover_tests(test_tree)
