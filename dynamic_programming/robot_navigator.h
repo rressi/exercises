@@ -6,12 +6,12 @@
 namespace dp::robot_navigator {
 
 struct Pos {
-    int x{};
-    int y{};
+  int x{};
+  int y{};
 };
 
 inline bool operator==(const Pos &a, const Pos &b) {
-    return a.x == b.x && a.y == b.y;
+  return a.x == b.x && a.y == b.y;
 }
 
 using Blockers = std::vector<std::vector<bool>>;

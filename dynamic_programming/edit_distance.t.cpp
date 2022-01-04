@@ -3,29 +3,28 @@
 
 #include "edit_distance.h"
 
-
 namespace dp {
 namespace {
 
 struct TestCase {
-    std::string a{};
-    std::string b{};
-    std::size_t maxDistance{0};
-    bool expectedOutcome{true};
+  std::string a{};
+  std::string b{};
+  std::size_t maxDistance{0};
+  bool expectedOutcome{true};
 };
 
 }  // namespace
 
 class TestEditDistance : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestEditDistance, testMatchStrings) {
-    const auto &param = TestEditDistance::GetParam();
-    EXPECT_EQ(param.expectedOutcome,
-              matchStrings(param.a, param.b, param.maxDistance));
+  const auto &param = TestEditDistance::GetParam();
+  EXPECT_EQ(param.expectedOutcome,
+            matchStrings(param.a, param.b, param.maxDistance));
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -55,10 +54,10 @@ INSTANTIATE_TEST_SUITE_P(
 
 auto TestEditDistance::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    const auto &param = testInfo.param;
-    return std::string(param.a) + "_" + std::string(param.b) + "_" +
-           std::to_string(param.maxDistance) + "_" +
-           std::to_string(param.expectedOutcome);
+  const auto &param = testInfo.param;
+  return std::string(param.a) + "_" + std::string(param.b) + "_" +
+         std::to_string(param.maxDistance) + "_" +
+         std::to_string(param.expectedOutcome);
 }
 
 }  // namespace dp

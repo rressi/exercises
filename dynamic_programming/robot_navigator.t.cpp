@@ -3,31 +3,30 @@
 
 #include "robot_navigator.h"
 
-
 namespace dp::robot_navigator {
 namespace {
 
 using TestName = std::string;
 
 struct TestCase {
-    TestName testName{};
-    Blockers inputGrid{};
-    Opt<Path> expectedOutcome{};
+  TestName testName{};
+  Blockers inputGrid{};
+  Opt<Path> expectedOutcome{};
 };
 
 }  // namespace
 
 class TestRobotNavigator : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestRobotNavigator, test) {
-    const auto &param = TestRobotNavigator::GetParam();
+  const auto &param = TestRobotNavigator::GetParam();
 
-    auto actualOucome = findPath(param.inputGrid);
-    EXPECT_EQ(param.expectedOutcome, actualOucome);
+  auto actualOucome = findPath(param.inputGrid);
+  EXPECT_EQ(param.expectedOutcome, actualOucome);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -96,7 +95,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 auto TestRobotNavigator::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    return testInfo.param.testName;
+  return testInfo.param.testName;
 }
 
 }  // namespace dp::robot_navigator

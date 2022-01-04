@@ -7,11 +7,11 @@ namespace {
 
 template <unsigned maxThreads>
 void BM_FindPrimeNumbers(benchmark::State &state) {
-    auto maxNumber = numbers::Number(state.range(0));
-    for (auto _ : state) {
-        numbers::findPrimeNumbers(maxNumber, maxThreads);
-    }
-    state.SetComplexityN(state.range(0));
+  auto maxNumber = numbers::Number(state.range(0));
+  for (auto _ : state) {
+    numbers::findPrimeNumbers(maxNumber, maxThreads);
+  }
+  state.SetComplexityN(state.range(0));
 }
 
 }  // namespace
