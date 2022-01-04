@@ -26,24 +26,26 @@ class TestBinaryTreeHash : public ::testing::Test {
                             std ::size_t last) const -> HashCode;
 };
 
-TEST_F(TestBinaryTreeHash, testVisit_depth1) { runTest(InputValues{"0"}, 0); }
+TEST_F(TestBinaryTreeHash, testVisit_depth1) {
+  runTest(InputValues{"0"}, 1339070498);
+}
 
 TEST_F(TestBinaryTreeHash, testVisit_depth2) {
-  runTest(InputValues{"0", "1", "2"}, 0);
+  runTest(InputValues{"0", "1", "2"}, 966130708);
 }
 
 TEST_F(TestBinaryTreeHash, testVisit_depth3) {
-  runTest(InputValues{"0", "1", "2", "3", "4", "5", "6"}, 0);
+  runTest(InputValues{"0", "1", "2", "3", "4", "5", "6"}, 1763271953);
 }
 
 void TestBinaryTreeHash::runTest(const InputValues& inputValues,
-                                 HashCode expectedHahs) const {
+                                 HashCode expectedHashCode) const {
   auto tree = createBinaryTree(inputValues);
 
   auto actualHashCode = hashTree(*tree);
-  auto expectedHashCode =
-      generateExpectedHash(inputValues, 0, inputValues.size());
+  EXPECT_EQ(expectedHashCode, actualHashCode);
 
+  expectedHashCode = generateExpectedHash(inputValues, 0, inputValues.size());
   EXPECT_EQ(expectedHashCode, actualHashCode);
 }
 

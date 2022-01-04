@@ -27,7 +27,15 @@ function(addZlib)
             PUBLIC
                 "${CMAKE_CURRENT_LIST_DIR}"
         )
+        if(UNIX)
+            target_compile_definitions(
+                "${target}"
+                PUBLIC
+                    "Z_HAVE_UNISTD_H"
+            )
+        endif(UNIX)
     endforeach()
+
 endfunction()
 addZlib()
 
