@@ -14,9 +14,9 @@ template <class T>
 using Opt = std::optional<T>;
 
 struct BinaryTreeNode {
-    std::string value{};
-    Ptr<BinaryTreeNode> left{};
-    Ptr<BinaryTreeNode> right{};
+  std::string value{};
+  Ptr<BinaryTreeNode> left{};
+  Ptr<BinaryTreeNode> right{};
 };
 
 auto createBinaryTreeNode(std::string value) -> Ptr<BinaryTreeNode>;
@@ -31,7 +31,8 @@ auto createBinaryTree(std::vector<std::string>::const_iterator begin,
 bool isSubTree(const Ptr<BinaryTreeNode> &container,
                const Ptr<BinaryTreeNode> &contained);
 
-bool isSubTree(const BinaryTreeNode *container, BinaryTreeNode *contained);
+bool isSubTree(const BinaryTreeNode *container,
+               const BinaryTreeNode *contained);
 
 bool isBinarySearchTree(const Ptr<BinaryTreeNode> &tree,
                         const Opt<std::string> &minValue = {},

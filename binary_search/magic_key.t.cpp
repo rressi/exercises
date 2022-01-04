@@ -11,25 +11,25 @@ using InputValues = std::vector<int>;
 using ExpectedOutcome = bool;
 
 struct TestCase {
-    InputValues inputValues{};
-    ExpectedOutcome expectedOutcome{};
+  InputValues inputValues{};
+  ExpectedOutcome expectedOutcome{};
 };
 
 }  // namespace
 
 class TestMagicKey : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestMagicKey, testHasMagicKey) {
-    const auto &inputValues = TestMagicKey::GetParam().inputValues;
+  const auto &inputValues = TestMagicKey::GetParam().inputValues;
 
-    auto actualOutcome = hasMagicKey(inputValues);
+  auto actualOutcome = hasMagicKey(inputValues);
 
-    const auto &expectedOutcome = TestMagicKey::GetParam().expectedOutcome;
-    EXPECT_EQ(expectedOutcome, actualOutcome);
+  const auto &expectedOutcome = TestMagicKey::GetParam().expectedOutcome;
+  EXPECT_EQ(expectedOutcome, actualOutcome);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -68,39 +68,39 @@ INSTANTIATE_TEST_SUITE_P(
 
 auto TestMagicKey::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    auto name = std::string("case");
+  auto name = std::string("case");
 
-    for (auto &value : testInfo.param.inputValues) {
-        if (value < 0) {
-            name.append("_minus").append(std::to_string(-value));
-        } else {
-            name.append("_").append(std::to_string(value));
-        }
+  for (auto &value : testInfo.param.inputValues) {
+    if (value < 0) {
+      name.append("_minus").append(std::to_string(-value));
+    } else {
+      name.append("_").append(std::to_string(value));
     }
+  }
 
-    return name;
+  return name;
 }
 
 namespace {
 
 template <class T>
 auto vactorToString(const std::vector<T> &values) -> std::string {
-    std::stringstream buf;
-    buf << "[";
-    auto sep = "";
-    for (const auto &value : values) {
-        buf << sep << value;
-        sep = ", ";
-    }
-    buf << "]";
-    return buf.str();
+  std::stringstream buf;
+  buf << "[";
+  auto sep = "";
+  for (const auto &value : values) {
+    buf << sep << value;
+    sep = ", ";
+  }
+  buf << "]";
+  return buf.str();
 }
 
 auto operator<<(std::ostream &out, const TestCase &testCase) -> std::ostream & {
-    out << "{ \"inputValues\": \"" << vactorToString(testCase.inputValues)
-        << ", \"expectedOutcome\": \"" << std::boolalpha
-        << testCase.expectedOutcome << "\"}";
-    return out;
+  out << "{ \"inputValues\": \"" << vactorToString(testCase.inputValues)
+      << ", \"expectedOutcome\": \"" << std::boolalpha
+      << testCase.expectedOutcome << "\"}";
+  return out;
 }
 
 }  // namespace

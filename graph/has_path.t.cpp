@@ -3,7 +3,6 @@
 
 #include "has_path.h"
 
-
 namespace graph {
 namespace {
 
@@ -11,29 +10,29 @@ using NodeId = graph::Graph::NodeId;
 using Edges = std::vector<NodeId>;
 
 struct WithNode {
-    Color color{};
-    Edges edges{};
+  Color color{};
+  Edges edges{};
 };
 using WithGraph = std::vector<WithNode>;
 using ExpectedResult = bool;
 
 struct GraphTest_TestCase {
-    WithGraph withGraph{};
-    ColorList colorList{};
-    ExpectedResult expectedResult{};
+  WithGraph withGraph{};
+  ColorList colorList{};
+  ExpectedResult expectedResult{};
 };
 
 }  // namespace
 
 class TestHasPath : public ::testing::TestWithParam<GraphTest_TestCase> {
-   public:
-    using TestCase = GraphTest_TestCase;
+ public:
+  using TestCase = GraphTest_TestCase;
 
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 
-   protected:
-    auto createGraph() const -> Graph;
+ protected:
+  auto createGraph() const -> Graph;
 };
 
 INSTANTIATE_TEST_SUITE_P(
@@ -202,50 +201,50 @@ INSTANTIATE_TEST_SUITE_P(
     &TestHasPath::getTestName);
 
 TEST_P(TestHasPath, testHasPath) {
-    const auto &testCase = GetParam();
+  const auto &testCase = GetParam();
 
-    auto graph = createGraph();
-    EXPECT_EQ(testCase.expectedResult, hasPath(graph, testCase.colorList));
+  auto graph = createGraph();
+  EXPECT_EQ(testCase.expectedResult, hasPath(graph, testCase.colorList));
 }
 
 auto TestHasPath::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    const auto &testCase = testInfo.param;
-    auto buffer = std::string();
-    auto separator = "";
+  const auto &testCase = testInfo.param;
+  auto buffer = std::string();
+  auto separator = "";
 
-    for (const auto &withNode : testCase.withGraph) {
-        buffer.append(separator + toString(withNode.color) + "Node");
-        for (auto nodeId : withNode.edges) {
-            buffer.append(std::to_string(nodeId));
-        }
-        separator = "_";
+  for (const auto &withNode : testCase.withGraph) {
+    buffer.append(separator + toString(withNode.color) + "Node");
+    for (auto nodeId : withNode.edges) {
+      buffer.append(std::to_string(nodeId));
     }
+    separator = "_";
+  }
 
-    buffer.append("_path");
-    for (auto color : testCase.colorList) {
-        buffer.append(toString(color));
-    }
+  buffer.append("_path");
+  for (auto color : testCase.colorList) {
+    buffer.append(toString(color));
+  }
 
-    return buffer;
+  return buffer;
 }
 
 auto TestHasPath::createGraph() const -> Graph {
-    const auto &testCase = GetParam();
+  const auto &testCase = GetParam();
 
-    auto graph = Graph();
-    for (const auto &withNode : testCase.withGraph) {
-        graph.addNode(withNode.color);
+  auto graph = Graph();
+  for (const auto &withNode : testCase.withGraph) {
+    graph.addNode(withNode.color);
+  }
+  auto sourceNodeId = Graph::NodeId();
+  for (const auto &withNode : testCase.withGraph) {
+    for (const auto &destinationNodeId : withNode.edges) {
+      graph.addEdge(sourceNodeId, destinationNodeId);
     }
-    auto sourceNodeId = Graph::NodeId();
-    for (const auto &withNode : testCase.withGraph) {
-        for (const auto &destinationNodeId : withNode.edges) {
-            graph.addEdge(sourceNodeId, destinationNodeId);
-        }
-        sourceNodeId++;
-    }
+    sourceNodeId++;
+  }
 
-    return graph;
+  return graph;
 }
 
 }  // namespace graph

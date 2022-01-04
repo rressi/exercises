@@ -3,7 +3,6 @@
 
 #include "all_subsets.h"
 
-
 namespace dp {
 namespace {
 
@@ -13,34 +12,34 @@ using ExpectedOutcome = std::set<std::set<int>>;
 using TestName = std::string;
 
 struct TestCase {
-    NumItems numItems{};
+  NumItems numItems{};
 
-    NumExpectedSubsets numExpectedSubsets{};
-    ExpectedOutcome expectedOutcome{};
+  NumExpectedSubsets numExpectedSubsets{};
+  ExpectedOutcome expectedOutcome{};
 };
 
 }  // namespace
 
 class TestAllSubsets : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestAllSubsets, testExtractAllSubSets) {
-    const auto &param = TestAllSubsets::GetParam();
+  const auto &param = TestAllSubsets::GetParam();
 
-    auto source = std::set<int>();
-    for (auto i = NumItems(0); i < param.numItems; i++) {
-        source.insert(int(i));
-    }
-    ASSERT_EQ(param.numItems, source.size());
+  auto source = std::set<int>();
+  for (auto i = NumItems(0); i < param.numItems; i++) {
+    source.insert(int(i));
+  }
+  ASSERT_EQ(param.numItems, source.size());
 
-    auto actualOutcome = extractAllSubSets(source);
-    EXPECT_EQ(param.numExpectedSubsets, actualOutcome.size());
-    if (!param.expectedOutcome.empty()) {
-        EXPECT_EQ(param.expectedOutcome, actualOutcome);
-    }
+  auto actualOutcome = extractAllSubSets(source);
+  EXPECT_EQ(param.numExpectedSubsets, actualOutcome.size());
+  if (!param.expectedOutcome.empty()) {
+    EXPECT_EQ(param.expectedOutcome, actualOutcome);
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -86,7 +85,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 auto TestAllSubsets::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    return "n_" + std::to_string(testInfo.param.numItems);
+  return "n_" + std::to_string(testInfo.param.numItems);
 }
 
 }  // namespace dp

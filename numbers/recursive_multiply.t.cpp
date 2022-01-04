@@ -5,7 +5,6 @@
 
 #include "recursive_multiply.h"
 
-
 namespace numbers {
 namespace {
 
@@ -15,18 +14,18 @@ using TestCase = std::tuple<Multiplicand, Multiplicand>;
 }  // namespace
 
 class TestRecursiveMultiply : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestRecursiveMultiply, testRecursiveMultiply) {
-    auto [a, b] = TestRecursiveMultiply::GetParam();
+  auto [a, b] = TestRecursiveMultiply::GetParam();
 
-    auto actualResult = recursiveMultiply(a, b);
+  auto actualResult = recursiveMultiply(a, b);
 
-    auto expectedResult = std::uint64_t(a) * std::uint64_t(b);
-    EXPECT_EQ(expectedResult, actualResult);
+  auto expectedResult = std::uint64_t(a) * std::uint64_t(b);
+  EXPECT_EQ(expectedResult, actualResult);
 }
 
 INSTANTIATE_TEST_SUITE_P(FromZeroToTen, TestRecursiveMultiply,
@@ -40,8 +39,8 @@ INSTANTIATE_TEST_SUITE_P(EdgeCases, TestRecursiveMultiply,
 
 auto TestRecursiveMultiply::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    auto [a, b] = testInfo.param;
-    return std::to_string(a) + "_mult_" + std::to_string(b);
+  auto [a, b] = testInfo.param;
+  return std::to_string(a) + "_mult_" + std::to_string(b);
 }
 
 }  // namespace numbers

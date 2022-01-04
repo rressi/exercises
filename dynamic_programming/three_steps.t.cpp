@@ -4,33 +4,32 @@
 
 #include "three_steps.h"
 
-
 namespace dp {
 namespace {
 
 struct TestCase {
-    std::int64_t input{};
-    std::int64_t expectedOutcome{};
+  std::int64_t input{};
+  std::int64_t expectedOutcome{};
 };
 
 }  // namespace
 
 class TestThreeSteps : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestThreeSteps, testCountCombinationsInClimbingStairs) {
-    const auto &param = TestThreeSteps::GetParam();
-    EXPECT_EQ(param.expectedOutcome,
-              countCombinationsInClimbingStairs(param.input));
+  const auto &param = TestThreeSteps::GetParam();
+  EXPECT_EQ(param.expectedOutcome,
+            countCombinationsInClimbingStairs(param.input));
 }
 
 TEST_P(TestThreeSteps, testCountCombinationsInClimbingStairsRecursive) {
-    const auto &param = TestThreeSteps::GetParam();
-    EXPECT_EQ(param.expectedOutcome,
-              countCombinationsInClimbingStairsRecursive(param.input));
+  const auto &param = TestThreeSteps::GetParam();
+  EXPECT_EQ(param.expectedOutcome,
+            countCombinationsInClimbingStairsRecursive(param.input));
 }
 
 INSTANTIATE_TEST_SUITE_P(TestThreeSteps, TestThreeSteps,
@@ -47,18 +46,18 @@ INSTANTIATE_TEST_SUITE_P(TestThreeSteps, TestThreeSteps,
 
 auto TestThreeSteps::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    const auto &param = testInfo.param;
-    if (param.input < 0) {
-        return "n_minus_" + std::to_string(-param.input);
-    } else {
-        return "n_" + std::to_string(param.input);
-    }
+  const auto &param = testInfo.param;
+  if (param.input < 0) {
+    return "n_minus_" + std::to_string(-param.input);
+  } else {
+    return "n_" + std::to_string(param.input);
+  }
 }
 
 auto operator<<(std::ostream &out, const TestCase &testCase) -> std::ostream & {
-    out << "{\"input\": \"" << testCase.input << "\", \"expectedOutcome\": \""
-        << testCase.expectedOutcome << "\"}";
-    return out;
+  out << "{\"input\": \"" << testCase.input << "\", \"expectedOutcome\": \""
+      << testCase.expectedOutcome << "\"}";
+  return out;
 }
 
 }  // namespace dp

@@ -3,7 +3,6 @@
 
 #include "all_permutations.h"
 
-
 namespace dp {
 namespace {
 
@@ -13,44 +12,44 @@ using ExpectedOutcome = AllPermutations<std::string>;
 using DinstinctChars = bool;
 
 struct TestCase {
-    NumItems numItems{};
-    DinstinctChars distrinctChars{};
+  NumItems numItems{};
+  DinstinctChars distrinctChars{};
 
-    NumExpectedPermutations numExpectedPermuations{};
-    ExpectedOutcome expectedOutcome{};
+  NumExpectedPermutations numExpectedPermuations{};
+  ExpectedOutcome expectedOutcome{};
 };
 
 }  // namespace
 
 class TestAllPermutations : public ::testing::TestWithParam<TestCase> {
-   public:
-    static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
-        -> std::string;
+ public:
+  static auto getTestName(const ::testing::TestParamInfo<TestCase> &testInfo)
+      -> std::string;
 };
 
 TEST_P(TestAllPermutations, testExtractAllPermutations) {
-    const auto &param = TestAllPermutations::GetParam();
+  const auto &param = TestAllPermutations::GetParam();
 
-    auto input = std::string();
-    if (param.distrinctChars) {
-        input.reserve(param.numItems);
-        for (auto i = NumItems(0); i < param.numItems; i++) {
-            input.push_back('a' + i);
-        }
-    } else {
-        auto moduloFactor =
-            std::max<NumItems>(1, (param.numItems / 2) + (param.numItems & 1));
-        for (auto i = NumItems(0); i < param.numItems; i++) {
-            input.push_back('a' + (i % moduloFactor));
-        }
+  auto input = std::string();
+  if (param.distrinctChars) {
+    input.reserve(param.numItems);
+    for (auto i = NumItems(0); i < param.numItems; i++) {
+      input.push_back('a' + i);
     }
-    ASSERT_EQ(param.numItems, input.size());
+  } else {
+    auto moduloFactor =
+        std::max<NumItems>(1, (param.numItems / 2) + (param.numItems & 1));
+    for (auto i = NumItems(0); i < param.numItems; i++) {
+      input.push_back('a' + (i % moduloFactor));
+    }
+  }
+  ASSERT_EQ(param.numItems, input.size());
 
-    auto actualOutcome = extractAllPermutations(input);
-    EXPECT_EQ(param.numExpectedPermuations, actualOutcome.size());
-    if (!param.expectedOutcome.empty()) {
-        EXPECT_EQ(param.expectedOutcome, actualOutcome);
-    }
+  auto actualOutcome = extractAllPermutations(input);
+  EXPECT_EQ(param.numExpectedPermuations, actualOutcome.size());
+  if (!param.expectedOutcome.empty()) {
+    EXPECT_EQ(param.expectedOutcome, actualOutcome);
+  }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -142,11 +141,11 @@ INSTANTIATE_TEST_SUITE_P(FourToTen, TestAllPermutations,
 
 auto TestAllPermutations::getTestName(
     const ::testing::TestParamInfo<TestCase> &testInfo) -> std::string {
-    auto testName = "n_" + std::to_string(testInfo.param.numItems);
-    if (testInfo.param.distrinctChars) {
-        testName.append("_distrinctChars");
-    }
-    return testName;
+  auto testName = "n_" + std::to_string(testInfo.param.numItems);
+  if (testInfo.param.distrinctChars) {
+    testName.append("_distrinctChars");
+  }
+  return testName;
 }
 
 }  // namespace dp
