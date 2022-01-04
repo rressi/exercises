@@ -1,13 +1,5 @@
 #pragma once
 
-#include <cassert>
-#include <memory>
-#include <optional>
-#include <queue>
-#include <set>
-#include <tuple>
-#include <vector>
-
 #include "graph.h"
 
 namespace graph {

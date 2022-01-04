@@ -1,6 +1,15 @@
 
 #include "has_path.h"
 
+#include <cassert>
+#include <memory>
+#include <optional>
+#include <queue>
+#include <set>
+#include <tuple>
+#include <vector>
+
+
 namespace graph {
 namespace {
 
@@ -18,10 +27,7 @@ using Shared = std::shared_ptr<T>;
 
 class HasPathTask {
  public:
-  enum class Status { CONTINUE, FAIL, SUCCESS };
-
-  static auto start(const Graph& graph, const ColorList& colorList,
-                    Queue<HasPathTask>* taskQueue) -> Status;
+  enum class Status { CONTINUE, SUCCESS, FAIL };
 
   using ColorIndex = std::size_t;
   using NodeId = Graph::NodeId;
@@ -36,6 +42,9 @@ class HasPathTask {
 
   auto operator=(const HasPathTask& other) -> HasPathTask& = default;
   bool operator<(const HasPathTask& other) const;
+
+  static auto start(const Graph& graph, const ColorList& colorList,
+                    Queue<HasPathTask>* taskQueue) -> Status;
 
   auto execute(Queue<HasPathTask>* taskQueue) const -> Status;
 
@@ -92,10 +101,10 @@ auto HasPathTask::execute(Queue<HasPathTask>* taskQueue) const -> Status {
     return Status::CONTINUE;
   }
 
-  for (auto nextNodeId : graph_->findeNodesBySource(nodeId_)) {
+  for (auto nextNodeId : graph_->findNodesBySource(nodeId_)) {
     auto taskId = std::make_tuple(nextNodeId, colorIndex_);
-    auto [_, newInsertion] = visitedNodes_->emplace(taskId);
-    if (!newInsertion) {
+    auto [_, firstVisit] = visitedNodes_->emplace(taskId);
+    if (!firstVisit) {
       continue;
     }
 

@@ -1,6 +1,9 @@
 add_executable(
     test_graph
 
+    are_connected.cpp
+    are_connected.h
+
     color.cpp
     color.h
 

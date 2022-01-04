@@ -3,7 +3,9 @@
 #include <cassert>
 #include <stdexcept>
 
+#include "are_connected.h"
 #include "has_path.h"
+
 
 namespace graph {
 
@@ -34,7 +36,7 @@ auto Graph::findNodesByColor(Color color) const -> const NodeIds& {
   return nodesByColorIt->second;
 }
 
-auto Graph::findeNodesBySource(NodeId sourceNode) const -> const NodeIds& {
+auto Graph::findNodesBySource(NodeId sourceNode) const -> const NodeIds& {
   auto edgesIt = nodesBySource_.find(sourceNode);
   if (edgesIt == nodesBySource_.end()) {
     static const auto NO_NODE_IDS = NodeIds();
@@ -43,7 +45,7 @@ auto Graph::findeNodesBySource(NodeId sourceNode) const -> const NodeIds& {
   return edgesIt->second;
 }
 
-auto Graph::findeNodesByDestination(NodeId destinationNode) const
+auto Graph::findNodesByDestination(NodeId destinationNode) const
     -> const NodeIds& {
   auto edgesIt = nodesByDestination_.find(destinationNode);
   if (edgesIt == nodesByDestination_.end()) {
@@ -55,6 +57,10 @@ auto Graph::findeNodesByDestination(NodeId destinationNode) const
 
 bool Graph::hasPath(const ColorList& colorList) const {
   return graph::hasPath(*this, colorList);
+}
+
+bool Graph::areConnected(NodeId source, NodeId destination) const {
+  return graph::areConnected(*this, source, destination);
 }
 
 }  // namespace graph

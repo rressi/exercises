@@ -20,10 +20,11 @@ class Graph {
   void addEdge(NodeId source, NodeId destination);
 
   auto findNodesByColor(Color color) const -> const NodeIds &;
-  auto findeNodesBySource(NodeId sourceNode) const -> const NodeIds &;
-  auto findeNodesByDestination(NodeId destinationNode) const -> const NodeIds &;
+  auto findNodesBySource(NodeId sourceNode) const -> const NodeIds &;
+  auto findNodesByDestination(NodeId destinationNode) const -> const NodeIds &;
 
   bool hasPath(const ColorList &colorList) const;
+  bool areConnected(NodeId source, NodeId destination) const;
 
  private:
   NodeId nextNodeId_{};
