@@ -10,7 +10,7 @@ namespace graph {
 auto Graph::addNode(Color color) -> NodeId {
   auto nodeId = nextNodeId_;
   nextNodeId_++;
-  nodes_[color].insert(nodeId);
+  nodesByColor_[color].insert(nodeId);
   return nodeId;
 }
 
@@ -21,21 +21,32 @@ void Graph::addEdge(NodeId source, NodeId destination) {
   if (destination >= nextNodeId_) {
     throw std::runtime_error("Invalid destination node id");
   }
-  edges_[source].insert(destination);
+  nodesBySource_[source].insert(destination);
+  nodesByDestination_[destination].insert(source);
 }
 
 auto Graph::findNodesByColor(Color color) const -> const NodeIds& {
-  auto nodesByColorIt = nodes_.find(color);
-  if (nodesByColorIt == nodes_.end()) {
+  auto nodesByColorIt = nodesByColor_.find(color);
+  if (nodesByColorIt == nodesByColor_.end()) {
     static const auto NO_NODE_IDS = NodeIds();
     return NO_NODE_IDS;
   }
   return nodesByColorIt->second;
 }
 
-auto Graph::findLinkedNodes(NodeId nodeId) const -> const NodeIds& {
-  auto edgesIt = edges_.find(nodeId);
-  if (edgesIt == edges_.end()) {
+auto Graph::findeNodesBySource(NodeId sourceNode) const -> const NodeIds& {
+  auto edgesIt = nodesBySource_.find(sourceNode);
+  if (edgesIt == nodesBySource_.end()) {
+    static const auto NO_NODE_IDS = NodeIds();
+    return NO_NODE_IDS;
+  }
+  return edgesIt->second;
+}
+
+auto Graph::findeNodesByDestination(NodeId destinationNode) const
+    -> const NodeIds& {
+  auto edgesIt = nodesByDestination_.find(destinationNode);
+  if (edgesIt == nodesByDestination_.end()) {
     static const auto NO_NODE_IDS = NodeIds();
     return NO_NODE_IDS;
   }

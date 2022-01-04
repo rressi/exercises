@@ -8,6 +8,7 @@
 
 #include "color.h"
 
+
 namespace graph {
 
 class Graph {
@@ -19,14 +20,16 @@ class Graph {
   void addEdge(NodeId source, NodeId destination);
 
   auto findNodesByColor(Color color) const -> const NodeIds &;
-  auto findLinkedNodes(NodeId nodeId) const -> const NodeIds &;
+  auto findeNodesBySource(NodeId sourceNode) const -> const NodeIds &;
+  auto findeNodesByDestination(NodeId destinationNode) const -> const NodeIds &;
 
   bool hasPath(const ColorList &colorList) const;
 
  private:
   NodeId nextNodeId_{};
-  std::unordered_map<Color, NodeIds> nodes_{};
-  std::unordered_map<NodeId, NodeIds> edges_{};
+  std::unordered_map<Color, NodeIds> nodesByColor_{};
+  std::unordered_map<NodeId, NodeIds> nodesBySource_{};
+  std::unordered_map<NodeId, NodeIds> nodesByDestination_{};
 };
 
 }  // namespace graph
